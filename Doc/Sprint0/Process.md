@@ -1,4 +1,4 @@
-Reflect on how your team worked together
+Reflect on how your team worked together.
     In general, our team collaboration was great, though there were some difficulties. First of all, we had a communication problem at the very beginning, basically because one member did not answer anything at first; it was a big slowdown for our project progress. Later, we found out that this person was no longer in our team, and it explained some frustrations right at the beginning. These finally overcome, it set us into a position whereby more productive use of our time and energy flowed into our work, supporting each other through things and moving the process along so much more easily. What we picked up from this experience is that clear composition and early communication are very significant in any team, something we shall be keen on in our future collaborations.
 
 
