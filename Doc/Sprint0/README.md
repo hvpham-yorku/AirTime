@@ -1,3 +1,8 @@
+![alt text]("C:\Users\Dilpreet Bansi\Pictures\Screenshots\Screenshot 2024-11-05 230350.png")
+
+
+
+
 # AirTime Flight Booking System
 
 ## Motivation
@@ -16,8 +21,7 @@ The system also features a simple interface designed with Java Swing, allowing a
 ### Setup Instructions
 
 1. **Clone the Repository**
-   git clone https://github.com/your-username/airtime-flight-booking.git
-   cd airtime-flight-booking
+   git clone https://github.com/hvpham-yorku/AirTime.git
 
 2. **Database Setup**
     Install MySQL and create a database for the application:
@@ -32,13 +36,13 @@ The system also features a simple interface designed with Java Swing, allowing a
 
 ### Admin Features:
 
-Admin Login: Access the Admin Dashboard using valid credentials.
-Admin Dashboard: Manage flights by adding, deleting, or updating flight details (e.g., origin, destination, date, seats, price).
+* Admin Login: Access the Admin Dashboard using valid credentials.
+* Admin Dashboard: Manage flights by adding, deleting, or updating flight details (e.g., origin, destination, date, seats, price).
 
 ### Customer Features:
 
-Flight Search: Enter search criteria to view available flights.
-Booking: Select a flight, choose a seat, and confirm the booking with personal and payment details.
+* Flight Search: Enter search criteria to view available flights.
+* Booking: Select a flight, choose a seat, and confirm the booking with personal and payment details.
 
 ## Contribution
 
@@ -46,23 +50,23 @@ We welcome contributions! Here’s how to get started:
 
 1. Fork the Repository: Create a fork of the project on GitHub.
 2. Create a Branch: Use a consistent naming scheme for branches.
-    Feature branches: feature/short-description
-    Bugfix branches: bugfix/short-description
+    * Feature branches: feature/short-description
+    * Bugfix branches: bugfix/short-description
 
 3. Git Flow: We use a simple Git flow model.
-    Work on feature branches off of main.
-    Submit pull requests (PRs) to merge changes into main.
+    * Work on feature branches off of main.
+    * Submit pull requests (PRs) to merge changes into main.
 4. Ticketing System: Open an issue for discussion on GitHub before starting work, to avoid duplicate efforts.
 5. Pull Requests: Submit PRs on GitHub for review. Ensure PRs are well-documented, describe changes made, and reference any relevant issue numbers.
 
 ## License
-This project is open-source and distributed under the MIT License.
+This project is open-source and distributed.
 
 ## Acknowledgments
 
 We would like to acknowledge the following competitors for highlighting gaps in the industry and inspiring AirTime’s commitment to solving overbooking:
 
-Air Canada
-Expedia
-Google Flights
-Skyscanner
+* Air Canada
+* Expedia
+* Google Flights
+* Skyscanner
