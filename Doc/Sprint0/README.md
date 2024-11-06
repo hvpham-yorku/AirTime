@@ -1,7 +1,5 @@
-![alt text]("C:\Users\Dilpreet Bansi\Pictures\Screenshots\Screenshot 2024-11-05 230350.png")
 
-
-
+![screenshot](logo.png)
 
 # AirTime Flight Booking System
 
@@ -60,7 +58,7 @@ We welcome contributions! Here’s how to get started:
 5. Pull Requests: Submit PRs on GitHub for review. Ensure PRs are well-documented, describe changes made, and reference any relevant issue numbers.
 
 ## License
-This project is open-source and distributed.
+This project is open-source.
 
 ## Acknowledgments
 
