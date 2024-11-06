@@ -7,7 +7,7 @@
 |
 | Ossama Benaini | E | 217055997 | benainio@my.yorku.ca | 647-786-5972 | Narco4730
 |
-| | | | | |
+|Dilpreet Bansi | E | 218803213 | bansidil@my.yorku.ca| 647-458-7671 | dbansi
 |
 |
 ---
