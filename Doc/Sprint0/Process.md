@@ -12,7 +12,19 @@ How did you make decisions?
 
 How did you define priority and/or points of user stories? How many rounds of voting
 (on average) did you need to come to a consensus for the point estimate?
-    We ...
+    In this project, we prioritized and assigned each user story with a point value based on how much the user story impacts the core functionality of the flight booking system and the user experience. Our priority listing also considered technical dependencies that require the building blocks to be created first so that more complex features can be supported.
+
+    Priority Definition
+        Core Functionalities First: Stories vital for the system to work, such as the login of a user, creating an account, flight search, and booking, are rated as most important because they represent the backbone of activating stories of the booking process.
+        
+        Admin Controls and Flight Management: The admin controls were the next level in priority, stories 17, 18, and 19, in order to make sure flight details are accurate and manageable, which is crucial for the integrity of the system and the reliability of the service.
+        
+        Advanced User Features: The filtering of flights-features 6, 7, and 8-viewing transaction history, story 12, and travel insurance, story 15-were lower in priority, as these are features enhancing but not touching the core functionality of booking.
+        
+        System and Admin Management: The system management-related stories - 16, 20, 21, and the advanced administrative controls were the 
+        lowest priority, as they don't affect the customer's immediate experience in booking.
+    
+    For each story, we provided points based on its complexity and the estimated time it took to resolve each one. Actually, it took a couple of rounds of voting before consensus on story points was reached. In fact, two rounds on average were enough for the team members to reach a consensus, as each member was given the opportunity to explain their estimate.
 
 How frequently did you meet?
     We met a few times during this sprint to discuss ideas, share the progress and clear our doubts regarding the project. In fact, we should have had more frequent meetings to really serve us effectively in brainstorming, aligning on project goals, and updating each other on our work. Regular discussions in the future will help us to start solving problems immediately and not let the project fall behind schedule.
