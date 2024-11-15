@@ -19,27 +19,29 @@ public interface DBInterface {
     public Boolean deleteUser(int userID);
 
     // Flight Management Methods
-    public Boolean createFlight(String flightNumber, String departureCity, String destinationCity,
+    public Boolean createFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
             String departureTime, String arrivalTime, double price, int seatsAvailable);
 
-    public Flight getFlight(String flightID);
+    public Flight getFlight(int flightID);
 
-    public Boolean updateFlight(String flightID, String flightNumber, String departureCity, String destinationCity,
+    public Boolean updateFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
             String departureTime, String arrivalTime, double price, int seatsAvailable);
 
-    public Boolean deleteFlight(String flightID);
+    public Boolean deleteFlight(int flightID);
 
     // Booking Methods
     public Boolean createBooking(int userID, int flightID, double price, String seatNumber, boolean travelInsurance);
 
-    public Booking getBooking(String bookingID);
+    public Boolean updateBooking(int bookingId, double newPrice, String newSeatNumber, boolean newTravelInsurance);
+    
+    public Booking getBooking(int bookingID);
 
-    public Boolean cancelBooking(String bookingID);
+    public Boolean deleteBooking(int bookingID);
 
     // Transaction Methods
     public Boolean createTransaction(int userID, int bookingID, double amount);
 
-    public Transaction getTransaction(String transactionID);
+    public Transaction getTransaction(int transactionID);
 
     // Utility Methods
     public Boolean checkFlightAvailability(int flightID, int numberOfSeats);

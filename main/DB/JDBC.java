@@ -58,4 +58,17 @@ public class JDBC {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            DB DBInstance = new DB();
+
+            Boolean result = DBInstance.createUser(1, "admin11", "damin11", "admin");
+            System.out.println(result);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
 }
