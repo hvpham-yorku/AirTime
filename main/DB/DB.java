@@ -48,7 +48,20 @@ public class DB implements DBInterface {
         }
     }
 
-    // ========================================================================================================
+	// Close the connection when done with all operations
+	public void closeConnection() {
+		try {
+			if (getConn() != null && !getConn().isClosed()) {
+				getConn().close();
+				System.out.println("Database connection closed.");
+			}
+		} catch (SQLException e) {
+			System.out.println("Error closing database connection.");
+			e.printStackTrace();
+		}
+	}
+
+	// ========================================================================================================
     // USER METHODS
     // ========================================================================================================
 
@@ -61,7 +74,7 @@ public class DB implements DBInterface {
         }
 
         try {
-            String SQL = "INSERT INTO users(userID, username, password, role) VALUES(?, ?, ?, ?)";
+            String SQL = "INSERT INTO users(user_id, username, password, role) VALUES(?, ?, ?, ?)";
             Connection conn = getConn();
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, userID);
@@ -70,7 +83,7 @@ public class DB implements DBInterface {
             pstmt.setString(4, role);
 
             int rowsUpdated = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             if (rowsUpdated > 0) {
                 System.out.println("User created successfully.");
@@ -105,7 +118,7 @@ public class DB implements DBInterface {
                 String password = rs.getString("password");
                 String role = rs.getString("role");
 
-                conn.close();
+                //conn.close();
                 // Create and return a new User object
                 return new User(userID, username, password, role); // No redeclaration of userID here
             }
@@ -139,7 +152,7 @@ public class DB implements DBInterface {
 
             
             int rowsUpdated = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             return rowsUpdated > 0; // Returns true if the update was successful
 
@@ -165,7 +178,7 @@ public class DB implements DBInterface {
             pstmt.setInt(1, userID); 
 
             int rowsDeleted = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             if (rowsDeleted > 0) {
                 System.out.println("User deleted successfully.");
@@ -211,7 +224,7 @@ public class DB implements DBInterface {
             pstmt.setInt(8, seatsAvailable);
 
             int rowsInserted = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             return rowsInserted > 0;
 
@@ -246,7 +259,7 @@ public class DB implements DBInterface {
                 double price = rs.getDouble("price");
                 int seatsAvailable = rs.getInt("seats_available");
 
-                conn.close();
+                //conn.close();
                 return new Flight(flightID, flightNumber, departureCity, destinationCity, departureTime, arrivalTime,
                         price, seatsAvailable);
             }
@@ -286,7 +299,7 @@ public class DB implements DBInterface {
             pstmt.setInt(8, flightID);
 
             int rowsUpdated = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             return rowsUpdated > 0;
 
@@ -312,7 +325,7 @@ public class DB implements DBInterface {
             pstmt.setInt(1, flightID);
 
             int rowsDeleted = pstmt.executeUpdate();
-            conn.close();
+            //conn.close();
 
             return rowsDeleted > 0;
 
@@ -340,7 +353,7 @@ public class DB implements DBInterface {
             pstmt.setBoolean(5, travelInsurance);
 
             int rowsInserted = pstmt.executeUpdate();
-            DBConnection.close();
+            //conn.close();
 
             return rowsInserted > 0;
         } catch (SQLException e) {
@@ -371,7 +384,7 @@ public class DB implements DBInterface {
                 String bookingDate = rs.getString("booking_date");
                 int seatsBooked = rs.getInt("seats_booked");
 
-                conn.close();
+                //conn.close();
                 return new Booking(bookingID, userID, flightID, bookingDate, seatsBooked);
             }
 
@@ -394,7 +407,7 @@ public class DB implements DBInterface {
             pstmt.setInt(4, bookingId);
 
             int rowsUpdated = pstmt.executeUpdate();
-            DBConnection.close();
+            //conn.close();
 
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -413,7 +426,7 @@ public class DB implements DBInterface {
             pstmt.setInt(1, bookingId);
 
             int rowsDeleted = pstmt.executeUpdate();
-            DBConnection.close();
+            //conn.close();
 
             return rowsDeleted > 0;
         } catch (SQLException e) {
@@ -429,23 +442,23 @@ public class DB implements DBInterface {
 
     // Create a new transaction
     @Override
-    public Boolean createTransaction(int userID, int bookingID, double amount) {
-        if (userID <= 0 || bookingID <= 0 || amount <= 0) {
+    public Boolean createTransaction(int transactionID, int userID, int bookingID, double amount) {
+        if (transactionID <= 0 || userID <= 0 || bookingID <= 0 || amount <= 0) {
             System.out.println("Invalid input parameters for transaction creation ( createTransaction() - DB.java )");
             return false;
         }
 
         try {
-            String SQL = "INSERT INTO transactions (user_id, booking_id, amount) VALUES (?, ?, ?)";
+            String SQL = "INSERT INTO transactions (transaction_id, user_id, booking_id, amount) VALUES (?, ?, ?, ?)";
             Connection conn = getConn();
             PreparedStatement pstmt = conn.prepareStatement(SQL);
 
-            pstmt.setInt(1, userID);
-            pstmt.setInt(2, bookingID);
-            pstmt.setDouble(3, amount);
+            pstmt.setInt(1, transactionID);
+            pstmt.setInt(2, userID);
+            pstmt.setInt(3, bookingID);
+            pstmt.setDouble(4, amount);
 
             int rowsInserted = pstmt.executeUpdate();
-            conn.close();
 
             return rowsInserted > 0;
 
@@ -455,6 +468,7 @@ public class DB implements DBInterface {
         }
         return false;
     }
+
 
     // Get transaction by transactionID
     @Override
@@ -477,7 +491,7 @@ public class DB implements DBInterface {
                 double amount = rs.getDouble("amount");
                 String transactionDate = rs.getString("transaction_date");
 
-                conn.close();
+                //conn.close();
                 return new Transaction(transactionID, userID, bookingID, amount, transactionDate);
             }
 
@@ -509,7 +523,7 @@ public class DB implements DBInterface {
 
             if (rs.next()) {
                 int availableSeats = rs.getInt("seats_available");
-                conn.close();
+                //conn.close();
 
                 return availableSeats >= numberOfSeats;
             }
@@ -539,7 +553,7 @@ public class DB implements DBInterface {
 
             if (rs.next()) {
                 int count = rs.getInt(1);
-                conn.close();
+                //conn.close();
 
                 return count > 0;
             }

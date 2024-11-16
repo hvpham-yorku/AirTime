@@ -39,7 +39,7 @@ public interface DBInterface {
     public Boolean deleteBooking(int bookingID);
 
     // Transaction Methods
-    public Boolean createTransaction(int userID, int bookingID, double amount);
+    public Boolean createTransaction(int transactionID, int userID, int bookingID, double amount);
 
     public Transaction getTransaction(int transactionID);
 

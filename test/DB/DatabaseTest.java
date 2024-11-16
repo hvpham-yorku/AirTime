@@ -14,8 +14,9 @@ public class DatabaseTest {
             System.out.println("Failed to connect to the database.");
         }
         
+        
         // Test creating user
-        db.createUser(0, "janedoe", "password123", "admin");
+        db.createUser(1, "janedoe1", "password123", "admin");
         
         // Test retrieving user
         User user = db.getUser(1);
@@ -33,8 +34,11 @@ public class DatabaseTest {
         db.updateFlight(101, "AI100", "Toronto", "Los Angeles", "2024-12-12 08:00", "2024-12-12 10:00", 350.00, 140);
         db.deleteFlight(101);
         
-        // Test booking and transaction methods
-        db.createTransaction(1, 101, 200.00);
+        // Test transaction methods
+        //db.createTransaction(1, 2, 2, 200.00); --> Change transaction_id when testing
+        
+        // Close the connection
+        db.closeConnection();
     }
 }
 

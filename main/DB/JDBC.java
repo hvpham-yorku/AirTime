@@ -12,7 +12,7 @@ public class JDBC {
 	public int rowsInserted = 0;
 
 	public JDBC() throws IOException, InterruptedException {
-		String url = "jdbc:mysql://127.0.0.1:3306/AirTime?reconnect=true";
+		String url = "jdbc:mysql://127.0.0.1:3306/airtime_test?reconnect=true";
 		String user = "AirTime_123";
 		String password = "dqEn%rv@Up%$2?f";
 
@@ -46,7 +46,8 @@ public class JDBC {
 		}
 	}
 
-    public void closeConnection() {
+    /*
+	public void closeConnection() {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
@@ -57,6 +58,7 @@ public class JDBC {
             e.printStackTrace();
         }
     }
+    */
 
     public static void main(String[] args) {
         try {
