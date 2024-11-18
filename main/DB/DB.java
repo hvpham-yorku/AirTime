@@ -4,17 +4,68 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Arrays;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import main.Models.Booking;
 import main.Models.Flight;
 import main.Models.Transaction;
 import main.Models.User;
 
+/**
+ * @author henap
+ *
+ */
+
 public class DB implements DBInterface {
 
-    JDBC DBConnection;
     utility localUtils = new utility();
+    private static Connection conn;
+	public boolean connNull = true;
+	public boolean connIsValid = false;
+	public int rowsInserted = 0;
+	
+	// Initialize the database connection in the DB constructor
+    public DB() throws IOException, InterruptedException {
+		String url = "jdbc:mysql://127.0.0.1:3306/airtime_test?reconnect=true";
+		String user = "AirTime_123";
+		String password = "dqEn%rv@Up%$2?f";
 
-    public DB() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection(url, user, password);
+			if (conn != null) {
+				// initialize();
+				connNull = conn == null;
+				connIsValid = conn.isValid(5);
+				
+				System.out.println("Connected to the database");
+			} else {
+				System.out.println("Failed to make connection!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Connection getConn() {
+		return conn;
+	}
+	
+	public void setAutoCommit(boolean choice) {
+		try {
+			if (conn != null) {
+                conn.setAutoCommit(choice);
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+   /* public DB() {
         try {
             DBConnection = new JDBC(); // Handle the potential exception
         } catch (IOException | InterruptedException e) {
@@ -27,7 +78,8 @@ public class DB implements DBInterface {
     public static Connection getConn() {
         return JDBC.getConn(); 
     }
-
+	*/
+	
     // ========================================================================================================
     // Test Database Connection
     // ========================================================================================================
@@ -67,10 +119,11 @@ public class DB implements DBInterface {
 
     // Create a new user
     @Override
-    public Boolean createUser(int userID, String username, String password, String role) {
+    public User createUser(int userID, String username, String password, String role) {
+    	User user = null;
         if (!localUtils.checkEmptyOrNullString(username, password)) {
             System.out.println("Required parameters to createUser were empty or null ( createUser() - DB.java )");
-            return false;
+            //return false;
         }
 
         try {
@@ -87,15 +140,53 @@ public class DB implements DBInterface {
 
             if (rowsUpdated > 0) {
                 System.out.println("User created successfully.");
-                return true;
+                return user;
             }
 
         } catch (SQLException e) {
             System.out.println("Error creating user - ( createUser() - DB.java ) \n");
             e.printStackTrace();
         }
-        return false;
+        //return false;
+		return user;
     }
+    
+    // Verify user credentials
+    public User verifyUser(String username, String password) throws SQLException {
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            System.out.println("Invalid input parameters for user verification ( verifyUser() - DB.java )");
+            return null;
+        }
+
+        try {
+            String SQL = "SELECT * FROM users WHERE username = ? AND password = ?";
+            Connection conn = getConn();
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                // Extract user details from the result set
+                int userID = rs.getInt("user_id");
+                String retrievedUsername = rs.getString("username");
+                String retrievedPassword = rs.getString("password");
+                String role = rs.getString("role");
+
+                // Create and return a User object if the credentials are valid
+                return new User(userID, retrievedUsername, retrievedPassword, role);
+            } else {
+                System.out.println("Invalid credentials ( verifyUser() - DB.java )");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error verifying user - ( verifyUser() - DB.java )");
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     // Get user by userID
     @Override

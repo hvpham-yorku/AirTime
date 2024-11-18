@@ -2,6 +2,11 @@ package main.DB;
 
 //import java.util.Arrays;
 
+/**
+ * @author henap
+ *
+ */
+
 public class utility {
     public void printResult(String[] array) {
         for (int i = 0; i < array.length; i++) {
