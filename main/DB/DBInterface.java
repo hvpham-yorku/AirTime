@@ -11,6 +11,7 @@ import main.Models.User;
  */
 
 public interface DBInterface {
+	
     // Return TRUE or FALSE for CREATE, UPDATE, DELETE
     // Return Object for READ Methods
 
