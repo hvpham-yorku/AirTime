@@ -5,6 +5,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import main.Models.User;
+
+/**
+ * @author henap
+ *
+ */
+
 public class JDBC {
     private static Connection conn;
 	public boolean connNull = true;
@@ -64,7 +71,7 @@ public class JDBC {
         try {
             DB DBInstance = new DB();
 
-            Boolean result = DBInstance.createUser(1, "admin11", "damin11", "admin");
+            User result = DBInstance.createUser(1, "admin11", "damin11", "admin");
             System.out.println(result);
             
         } catch (Exception e) {

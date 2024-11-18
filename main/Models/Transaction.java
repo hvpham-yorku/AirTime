@@ -1,5 +1,10 @@
 package main.Models;
 
+/**
+ * @author henap
+ *
+ */
+
 public class Transaction {
     private int transactionID;
     private int userID;

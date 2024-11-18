@@ -1,5 +1,10 @@
 package main.Models;
 
+/**
+ * @author henap
+ *
+ */
+
 public class Booking {
     private int bookingID;
     private int userID;

@@ -5,12 +5,17 @@ import main.Models.Flight;
 import main.Models.Transaction;
 import main.Models.User;
 
+/**
+ * @author henap
+ *
+ */
+
 public interface DBInterface {
     // Return TRUE or FALSE for CREATE, UPDATE, DELETE
     // Return Object for READ Methods
 
     // User Management Methods
-    public Boolean createUser(int userID, String username, String password, String role);
+    public User createUser(int userID, String username, String password, String role);
 
     public User getUser(int userID);
 

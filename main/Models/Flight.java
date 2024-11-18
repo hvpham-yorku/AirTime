@@ -1,5 +1,10 @@
 package main.Models;
 
+/**
+ * @author henap
+ *
+ */
+
 public class Flight {
     private int flightID;
     private String flightNumber;
