@@ -3,19 +3,17 @@
  */
 package main.Views;
 
-import java.awt.CardLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.util.ArrayList;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import main.Controller.Controller;
-import main.Models.User;
+import main.DB.DB;
+import main.Models.Flight;
+
 /**
  * @author henap
  *
@@ -35,13 +33,16 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
 	JPanel main;
 	CardLayout card;
 	private final JButton btnNewButton = new JButton("Profile");
+
+    private JTable flightTable;
+    private DB database; // Add a reference to the DB instance
+    private JButton browseFlightsButton = new JButton("Browse Flights");
+    private JScrollPane tableScrollPane;
 	
 	
 	public AdminDashBoardPage(Controller controller) {
 		setBackground(new Color(255, 255, 255));
-
 		this.controller = controller;
-		
 		initialize();
 	}
 	
@@ -81,8 +82,70 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         this.setLayout(boxlayout);
         this.setBorder(new EmptyBorder(new Insets(100, 100, 100, 100)));
 		
-		
-	}
+         // Title setup
+         JLabel titleMsg = new JLabel("Welcome " + controller.getCurrentUser().getUsername() + "!");
+         titleMsg.setFont(new Font("Arial", Font.BOLD, 18));
+         this.add(titleMsg, BorderLayout.NORTH);
+ 
+         // Browse Flights button setup
+         browseFlightsButton.setForeground(Color.WHITE);
+         browseFlightsButton.setBackground(Color.BLACK);
+         browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
+         this.add(browseFlightsButton, BorderLayout.SOUTH);
+ 
+         // Set up table for displaying flight data
+         flightTable = new JTable();
+         tableScrollPane = new JScrollPane(flightTable);
+         tableScrollPane.setVisible(false); // Initially hidden
+         this.add(tableScrollPane, BorderLayout.CENTER);
+     }
+
+     private void toggleBrowseFlights() {
+        if (!tableScrollPane.isVisible()) {
+            loadFlightData(); // Load flight data from the database
+            tableScrollPane.setVisible(true);
+        } else {
+            tableScrollPane.setVisible(false);
+        }
+        revalidate();
+        repaint();
+    }
+
+    private void loadFlightData() {
+        try {
+            ArrayList<Flight> flights = new ArrayList<>();
+            int maxFlightID = 1000; // Replace with the actual maximum flight ID in your database
+    
+            for (int flightID = 1; flightID <= maxFlightID; flightID++) {
+                Flight flight = controller.getDatabase().getFlight(flightID);
+                if (flight != null) {
+                    flights.add(flight); // Add to the list if flight exists
+                }
+            }
+
+            // Prepare table data
+            String[] columnNames = {"Flight ID", "Flight Number", "Departure City", "Destination City", 
+                                     "Departure Time", "Arrival Time", "Price", "Seats Available"};
+            Object[][] tableData = new Object[flights.size()][columnNames.length];
+
+            for (int i = 0; i < flights.size(); i++) {
+                Flight flight = flights.get(i);
+                tableData[i][0] = flight.getFlightID();
+                tableData[i][1] = flight.getFlightNumber();
+                tableData[i][2] = flight.getDepartureCity();
+                tableData[i][3] = flight.getDestinationCity();
+                tableData[i][4] = flight.getDepartureTime();
+                tableData[i][5] = flight.getArrivalTime();
+                tableData[i][6] = flight.getPrice();
+                tableData[i][7] = flight.getSeatsAvailable();
+            }
+
+            // Set table model
+            flightTable.setModel(new DefaultTableModel(tableData, columnNames));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to load flight data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 	
 	
 	@Override

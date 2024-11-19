@@ -1,5 +1,11 @@
 package main.Models;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import main.DB.DB;
+
 /**
  * @author henap
  *
@@ -92,6 +98,42 @@ public class Flight {
     public void setSeatsAvailable(int seatsAvailable) {
         this.seatsAvailable = seatsAvailable;
     }
+
+    public String getOrigin() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getDestination() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public ArrayList<Flight> getAllFlights() {
+    ArrayList<Flight> flights = new ArrayList<>();
+    String SQL = "SELECT * FROM flights";
+
+    try (PreparedStatement stmt = DB.getConn().prepareStatement(SQL);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Flight flight = new Flight(
+                rs.getInt("flight_id"),
+                rs.getString("flight_number"),
+                rs.getString("departure_city"),
+                rs.getString("destination_city"),
+                rs.getString("departure_time"),
+                rs.getString("arrival_time"),
+                rs.getDouble("price"),
+                rs.getInt("seats_available")
+            );
+            flights.add(flight);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error fetching all flights: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    return flights;
+}
 
     
 }

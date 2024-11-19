@@ -1,7 +1,6 @@
 package test.DB;
 
 import java.io.IOException;
-
 import main.DB.DB;
 import main.Models.User;
 
@@ -51,6 +50,7 @@ public class DatabaseTest {
         }
 
         // Test flight methods
+        int flightID = 101;
         boolean flightCreated = db.createFlight(101, "AI100", "Toronto", "New York", "2024-12-10 08:00", "2024-12-10 10:00", 300.00, 150);
         if (flightCreated) {
             System.out.println("Flight created successfully.");
@@ -58,7 +58,7 @@ public class DatabaseTest {
             System.out.println("Failed to create flight.");
         }
 
-        db.getFlight(101);  // Assuming getFlight prints the flight details if found
+        db.getFlight(flightID);  // Assuming getFlight prints the flight details if found
 
         boolean flightUpdated = db.updateFlight(101, "AI100", "Toronto", "Los Angeles", "2024-12-12 08:00", "2024-12-12 10:00", 350.00, 140);
         if (flightUpdated) {
