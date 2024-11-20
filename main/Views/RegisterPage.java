@@ -37,8 +37,8 @@ public class RegisterPage extends JPanel implements ItemListener, ActionListener
 	
 	JPanel rolePanel = new JPanel();
 	JLabel roleLabel = new JLabel("Role");
-	//JComboBox<String> role = new JComboBox<>(new String[] { "Admin", "Customer" });
-	JTextField role = new JTextField();
+	JComboBox<String> role = new JComboBox<>(new String[] { "customer", "admin" });
+	//JTextField role = new JTextField();
 	
 	JPanel passwordPanel = new JPanel();
 	JLabel passwordLabel = new JLabel("Password");
@@ -122,23 +122,39 @@ public class RegisterPage extends JPanel implements ItemListener, ActionListener
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getSource() == back) {
-			controller.welcomePage();
-		} else if (e.getSource() == submit) {
-			System.out.println(String.valueOf(password.getPassword()));
-			try {
-	            int userId = Integer.parseInt(id.getText());  // Convert id to int
-	            String username = name.getText();
-	            String userPassword = String.valueOf(password.getPassword());
-	            String userRole = role.getText();  // Get the selected role
+		        controller.welcomePage();
+		    } else if (e.getSource() == submit) {
+		        String username = name.getText();
+		        String userPassword = String.valueOf(password.getPassword());
 
-	            // Call createUser method in controller with the correct data types
-	            controller.createUser(userId, username, userPassword, userRole);
+		        // Check if password is at least 8 characters
+		        if (userPassword.length() < 8) {
+		            JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long.", 
+		                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+		            return; // Stop execution if password is invalid
+		        }
 
-	        } catch (NumberFormatException ex) {
-	            System.out.println("Invalid UserID: Please enter a numeric value.");
-	            JOptionPane.showMessageDialog(this, "Invalid UserID: Please enter a numeric value.", 
-	                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-	        }
+		        // Check if username is at least 5 characters
+		        if (username.length() < 5) {
+		            JOptionPane.showMessageDialog(this, "Username must be at least 5 characters long.", 
+		                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+		            return; // Stop execution if username is invalid
+		        }
+
+		        // Process registration if inputs are valid
+		        try {
+		            int userId = Integer.parseInt(id.getText());  // Convert id to int
+		            String userRole = role.getSelectedItem().toString();  // Get the selected role
+
+		            // Call createUser method in controller with the correct data types
+		            controller.createUser(userId, username, userPassword, userRole);
+
+		        } catch (NumberFormatException ex) {
+		            System.out.println("Invalid UserID: Please enter a numeric value.");
+		            JOptionPane.showMessageDialog(this, "Invalid UserID: Please enter a numeric value.", 
+		                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+		        }
+
 			//controller.createUser(id.getText(), name.getText(), String.valueOf(password.getPassword()), role.getText());
 
 		}
