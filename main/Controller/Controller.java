@@ -1,18 +1,12 @@
 package main.Controller;
 
+import java.awt.CardLayout;
+import java.io.IOException;
+import java.sql.SQLException;
+import javax.swing.*;
 import main.DB.*;
 import main.Models.*;
 import main.Views.*;
-
-import javax.swing.*;
-import javax.swing.ImageIcon;
-import java.awt.*;
-
-import java.awt.CardLayout;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
 
 /**
  * @author henap
@@ -24,6 +18,8 @@ public class Controller {
 	private CardLayout card;
 	private DB mysql_database;
 	private User currentUser;
+
+	
           
 	public Controller(JPanel main, CardLayout card) {
 		this.main = main;
@@ -81,7 +77,7 @@ public class Controller {
 		try {
 			currentUser = this.mysql_database.verifyUser(username, password);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return false;
 		}
 		if (currentUser == null) {

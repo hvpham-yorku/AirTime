@@ -12,7 +12,7 @@ import main.Models.User;
  *
  */
 
-public class JDBC {
+public class JDBC { /// THIS CLASS WILL BE DELETED LATER SO DO NOT USE ANYMORE ///
     private static Connection conn;
 	public boolean connNull = true;
 	public boolean connIsValid = false;
