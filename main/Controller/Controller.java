@@ -40,7 +40,7 @@ public class Controller {
 	}
 	
 	
-	protected DB getDatabase() {
+	public DB getDatabase() {
 		return this.mysql_database;
 	}
 	
