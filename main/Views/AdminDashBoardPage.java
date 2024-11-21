@@ -39,6 +39,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     private JButton browseFlightsButton = new JButton("Browse Flights");
     private JScrollPane tableScrollPane;
 	
+    private JButton updateFlightButton = new JButton("Update Flight");
 	
 	public AdminDashBoardPage(Controller controller) {
 		setBackground(new Color(255, 255, 255));
@@ -98,6 +99,11 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
          tableScrollPane = new JScrollPane(flightTable);
          tableScrollPane.setVisible(false); // Initially hidden
          this.add(tableScrollPane, BorderLayout.CENTER);
+
+         updateFlightButton.setForeground(Color.WHITE);
+         updateFlightButton.setBackground(Color.BLACK);
+         updateFlightButton.addActionListener(e -> openUpdateFlightForm());
+         this.add(updateFlightButton, BorderLayout.SOUTH);
      }
 
      private void toggleBrowseFlights() {
@@ -147,6 +153,93 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         }
     }
 	
+    private void openUpdateFlightForm() {
+        int selectedRow = flightTable.getSelectedRow();
+    
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a flight to update.", "No Flight Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+    
+        // Get flight details from the selected row
+        int flightID = (int) flightTable.getValueAt(selectedRow, 0);
+        String flightNumber = (String) flightTable.getValueAt(selectedRow, 1);
+        String departureCity = (String) flightTable.getValueAt(selectedRow, 2);
+        String destinationCity = (String) flightTable.getValueAt(selectedRow, 3);
+        String departureTime = (String) flightTable.getValueAt(selectedRow, 4);
+        String arrivalTime = (String) flightTable.getValueAt(selectedRow, 5);
+        double price = (double) flightTable.getValueAt(selectedRow, 6);
+        int seatsAvailable = (int) flightTable.getValueAt(selectedRow, 7);
+    
+        // Open a new JFrame for updating the flight
+        JFrame updateFrame = new JFrame("Update Flight");
+        updateFrame.setSize(400, 400);
+        updateFrame.setLayout(new GridLayout(0, 2));
+    
+        // Add form fields
+        JTextField flightNumberField = new JTextField(flightNumber);
+        JTextField departureCityField = new JTextField(departureCity);
+        JTextField destinationCityField = new JTextField(destinationCity);
+        JTextField departureTimeField = new JTextField(departureTime);
+        JTextField arrivalTimeField = new JTextField(arrivalTime);
+        JTextField priceField = new JTextField(String.valueOf(price));
+        JTextField seatsAvailableField = new JTextField(String.valueOf(seatsAvailable));
+    
+        updateFrame.add(new JLabel("Flight Number:"));
+        updateFrame.add(flightNumberField);
+        updateFrame.add(new JLabel("Departure City:"));
+        updateFrame.add(departureCityField);
+        updateFrame.add(new JLabel("Destination City:"));
+        updateFrame.add(destinationCityField);
+        updateFrame.add(new JLabel("Departure Time:"));
+        updateFrame.add(departureTimeField);
+        updateFrame.add(new JLabel("Arrival Time:"));
+        updateFrame.add(arrivalTimeField);
+        updateFrame.add(new JLabel("Price:"));
+        updateFrame.add(priceField);
+        updateFrame.add(new JLabel("Seats Available:"));
+        updateFrame.add(seatsAvailableField);
+    
+        // Add Save button
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e -> {
+            try {
+                // Get updated flight details
+                String updatedFlightNumber = flightNumberField.getText();
+                String updatedDepartureCity = departureCityField.getText();
+                String updatedDestinationCity = destinationCityField.getText();
+                String updatedDepartureTime = departureTimeField.getText();
+                String updatedArrivalTime = arrivalTimeField.getText();
+                double updatedPrice = Double.parseDouble(priceField.getText());
+                int updatedSeatsAvailable = Integer.parseInt(seatsAvailableField.getText());
+    
+                // Call updateFlight method in Controller
+                boolean success = controller.getDatabase().updateFlight(
+                    flightID,
+                    updatedFlightNumber,
+                    updatedDepartureCity,
+                    updatedDestinationCity,
+                    updatedDepartureTime,
+                    updatedArrivalTime,
+                    updatedPrice,
+                    updatedSeatsAvailable
+                );
+    
+                if (success) {
+                    JOptionPane.showMessageDialog(updateFrame, "Flight updated successfully!");
+                    updateFrame.dispose();
+                    loadFlightData(); // Refresh the flight table
+                } else {
+                    JOptionPane.showMessageDialog(updateFrame, "Failed to update flight.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(updateFrame, "Invalid input: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    
+        updateFrame.add(saveButton);
+        updateFrame.setVisible(true);
+    }
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
