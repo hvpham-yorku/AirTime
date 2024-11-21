@@ -58,10 +58,17 @@ public class Controller {
 			try {
 				currentUser = this.mysql_database.createUser(userID, username, password, role);
 				if (currentUser != null) {
-					AdminDashBoardPage adminLandingPage = new AdminDashBoardPage(this);
-					main.add(adminLandingPage, "adminLandingPage");
-					card.show(main, "adminLandingPage");
-					return true;
+					// Redirect based on user role
+	                if ("admin".equals(currentUser.getRole())) {
+	                    AdminDashBoardPage adminLandingPage = new AdminDashBoardPage(this);
+	                    main.add(adminLandingPage, "adminLandingPage");
+	                    card.show(main, "adminLandingPage");
+	                } else if ("customer".equals(currentUser.getRole())) {
+	                    CustomerDashBoardPage customerLandingPage = new CustomerDashBoardPage(this);
+	                    main.add(customerLandingPage, "customerLandingPage");
+	                    card.show(main, "customerLandingPage");
+	                }
+	                return true;
 				} else {
 					return false;
 				}
@@ -83,10 +90,17 @@ public class Controller {
 		if (currentUser == null) {
 			return false;
 		} else {
-			AdminDashBoardPage adminLandingPage = new AdminDashBoardPage(this);
-			main.add(adminLandingPage, "adminLandingPage");
-			card.show(main, "adminLandingPage");
-			return true;
+			// Redirect based on user role
+	        if ("admin".equals(currentUser.getRole())) {
+	            AdminDashBoardPage adminLandingPage = new AdminDashBoardPage(this);
+	            main.add(adminLandingPage, "adminLandingPage");
+	            card.show(main, "adminLandingPage");
+	        } else if ("customer".equals(currentUser.getRole())) {
+	            CustomerDashBoardPage customerLandingPage = new CustomerDashBoardPage(this);
+	            main.add(customerLandingPage, "customerLandingPage");
+	            card.show(main, "customerLandingPage");
+	        }
+	        return true;
 		}
 	}
 	
