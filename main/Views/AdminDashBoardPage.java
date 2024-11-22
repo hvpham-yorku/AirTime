@@ -51,7 +51,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     private JButton browseFlightsButton = new JButton("Browse Flights");
     private JScrollPane tableScrollPane;
 	
-    private JButton updateFlightButton = new JButton("Update Flight");
+    //private JButton updateFlightButton = new JButton("Update Flight");
 	
 	public AdminDashBoardPage(Controller controller) {
 		setBackground(new Color(255, 255, 255));
@@ -81,23 +81,32 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         // Set up the addFlight button
         addFlight.setForeground(new Color(255, 255, 255));
         addFlight.setBackground(new Color(0, 0, 0));
-        addFlight.addActionListener(e -> {
+        addFlight.addActionListener(e -> addFlight());
+        /*{
             //controller.addFlight
-        });
+        }); */
         //Set up the removeFlight button
         removeFlight.setForeground(new Color(255, 255, 255));
         removeFlight.setBackground(new Color(0, 0, 0));
-        removeFlight.addActionListener(e -> {
+        removeFlight.addActionListener(e -> removeFlight());
+        /*{
             //controller.removeFlight
         });
+        */
+        removeFlight.setVisible(false); // Initially hidden
+        
         // Set up the updateFlight button
-        updateFlight.setForeground(new Color(255, 255, 255));
-        updateFlight.setBackground(new Color(0, 0, 0));
-        updateFlight.addActionListener(e->{
-            //controller.updateFlight
-        });
+        updateFlight.setForeground(Color.WHITE);
+        updateFlight.setBackground(Color.BLACK);
+        updateFlight.addActionListener(e -> openUpdateFlightForm());
+        updateFlight.setVisible(false); // Initially hidden
 
-
+        
+        // Browse Flights button setup
+        browseFlightsButton.setForeground(Color.WHITE);
+        browseFlightsButton.setBackground(Color.BLACK);
+        browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
+        this.add(browseFlightsButton, BorderLayout.SOUTH);
 
         // Create a small panel to hold the two buttons
         JPanel buttonPanel = new JPanel();
@@ -109,12 +118,10 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         JPanel flightButtonPanel = new JPanel();
         flightButtonPanel.setLayout(new GridLayout(1, 3, 10, 10));
         flightButtonPanel.setBackground(Color.WHITE);
+        flightButtonPanel.add(browseFlightsButton);
         flightButtonPanel.add(addFlight);
         flightButtonPanel.add(updateFlight);
         flightButtonPanel.add(removeFlight);
-
-
-
 
         // Add title and button panel to the main layout
         this.setLayout(new BorderLayout());
@@ -128,36 +135,25 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         BoxLayout boxlayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(boxlayout);
         this.setBorder(new EmptyBorder(new Insets(100, 100, 100, 100)));
-		
-         // Title setup
-         JLabel titleMsg = new JLabel("Welcome " + controller.getCurrentUser().getUsername() + "!");
-         titleMsg.setFont(new Font("Arial", Font.BOLD, 18));
-         this.add(titleMsg, BorderLayout.NORTH);
- 
-         // Browse Flights button setup
-         browseFlightsButton.setForeground(Color.WHITE);
-         browseFlightsButton.setBackground(Color.BLACK);
-         browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
-         this.add(browseFlightsButton, BorderLayout.SOUTH);
- 
+        
          // Set up table for displaying flight data
          flightTable = new JTable();
          tableScrollPane = new JScrollPane(flightTable);
          tableScrollPane.setVisible(false); // Initially hidden
          this.add(tableScrollPane, BorderLayout.CENTER);
 
-         updateFlightButton.setForeground(Color.WHITE);
-         updateFlightButton.setBackground(Color.BLACK);
-         updateFlightButton.addActionListener(e -> openUpdateFlightForm());
-         this.add(updateFlightButton, BorderLayout.SOUTH);
      }
 
      private void toggleBrowseFlights() {
         if (!tableScrollPane.isVisible()) {
             loadFlightData(); // Load flight data from the database
             tableScrollPane.setVisible(true);
+            updateFlight.setVisible(true);
+            removeFlight.setVisible(true);
         } else {
             tableScrollPane.setVisible(false);
+            updateFlight.setVisible(false);
+            removeFlight.setVisible(false);
         }
         revalidate();
         repaint();
