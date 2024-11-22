@@ -11,10 +11,10 @@ The system also features a simple interface designed with Java Swing, allowing a
 ## Installation
 
 ### Prerequisites
-- **Java Development Kit (JDK) 8 or higher** - for compiling and running the Java code.
+- **Java Development Kit (JDK) 17* - for compiling and running the Java code.
 - **MySQL Server** - for database management.
 - **Java Swing** - included in the JDK.
-- **JDBC Driver for MySQL** - to connect Java applications with MySQL.
+- **JDBC Driver for MySQL** - to connect Java applications with MySQL (Already in the build).
 
 ### Setup Instructions
 
