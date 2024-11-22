@@ -1,5 +1,8 @@
 
-Sprint 1 Planning Meeting
+Sprint Goal:
+The goal of Sprint 1 is to deliver the foundational functionalities of the Flight Booking System that enable basic admin operations and initial customer flight search functionality.
+
+Sprint 1 Planning Meeting #1
 Date: November 13th 2024
 Time: 7:00 PM
 Location: ZOOM Meeting
@@ -9,10 +12,6 @@ The following participants attended and contributed to the meeting:
 Dilpreet Bansi
 Hena Patel 
 Ossama Benaini
-
-Sprint Goal:
-The goal of Sprint 1 is to deliver the foundational functionalities of the Flight Booking System that enable basic admin operations and initial customer flight search functionality.
-
 
 User Stories to be completed in Sprint 1:
 
@@ -36,6 +35,26 @@ As an admin, I must be able to add new flights to the system so that users can b
 
 Delay Flights (Admin):
 As an admin, I must be able to delay flights so that users are informed of changes.
+
+Spikes:
+Database Error Handling:
+Research how to handle database connection errors gracefully.
+
+Form Validation:
+Research best practices for frontend form validation.
+
+
+
+Sprint 1 Planning Meeting #2
+Date: November 15th 2024
+Time: 7:00 PM
+Location: ZOOM Meeting
+
+The following participants attended and contributed to the meeting:
+
+Dilpreet Bansi
+Hena Patel 
+Ossama Benaini
 
 Task Breakdown:
 
@@ -61,24 +80,20 @@ Tasks:
 Update Flights:
 Frontend: Design form for modifying flight details.
 Backend: Implement logic for updating flight information in the database.
+
 Remove Flights:
 Frontend: Add button for selecting and removing flights.
 Backend: Implement logic for deleting flights and handling errors.
+
 Add Flights:
 Frontend: Design form for adding new flights.
 Backend: Implement logic for adding flights to the database.
+
 Delay Flights:
 Frontend: Design form for updating flight times.
 Backend: Implement delay handling logic.
-
 QA: Test each operation for accuracy and edge cases.
 
-Spikes:
-Database Error Handling:
-Research how to handle database connection errors gracefully.
-
-Form Validation:
-Research best practices for frontend form validation.
 
 Meeting Outcomes:
 All participants agreed on the sprint goal and selected user stories.
