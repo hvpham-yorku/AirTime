@@ -3,8 +3,6 @@
  */
 package main.Views;
 
-import java.awt.CardLayout;
-import java.awt.Insets;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -34,6 +32,8 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     JButton addFlight = new JButton("Add Flight");
     JButton removeFlight = new JButton("Remove Flight");
     JButton updateFlight = new JButton("Update Flight");
+    private JButton searchDepartureCityButton = new JButton("Search by Departure City");
+    private JButton searchDestinationCityButton = new JButton("Search by Destination City");
 
 
 	JPanel buttons = new JPanel();
@@ -78,35 +78,6 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         btnNewButton.addActionListener(e -> {
             // controller.profilePage(controller.getCurrentUser()); --> NEED TO CREATE!!
         });
-        // Set up the addFlight button
-        addFlight.setForeground(new Color(255, 255, 255));
-        addFlight.setBackground(new Color(0, 0, 0));
-        addFlight.addActionListener(e -> addFlight());
-        /*{
-            //controller.addFlight
-        }); */
-        //Set up the removeFlight button
-        removeFlight.setForeground(new Color(255, 255, 255));
-        removeFlight.setBackground(new Color(0, 0, 0));
-        removeFlight.addActionListener(e -> removeFlight());
-        /*{
-            //controller.removeFlight
-        });
-        */
-        removeFlight.setVisible(false); // Initially hidden
-        
-        // Set up the updateFlight button
-        updateFlight.setForeground(Color.WHITE);
-        updateFlight.setBackground(Color.BLACK);
-        updateFlight.addActionListener(e -> openUpdateFlightForm());
-        updateFlight.setVisible(false); // Initially hidden
-
-        
-        // Browse Flights button setup
-        browseFlightsButton.setForeground(Color.WHITE);
-        browseFlightsButton.setBackground(Color.BLACK);
-        browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
-        this.add(browseFlightsButton, BorderLayout.SOUTH);
 
         // Create a small panel to hold the two buttons
         JPanel buttonPanel = new JPanel();
@@ -114,33 +85,62 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         buttonPanel.add(btnNewButton);
         buttonPanel.add(logout);
 
-        //Created the flight button panel to hold addFlight, removeFlight and updateFlight
+        // Create the flight button panel with a vertical layout
         JPanel flightButtonPanel = new JPanel();
-        flightButtonPanel.setLayout(new GridLayout(1, 3, 10, 10));
+        flightButtonPanel.setLayout(new BoxLayout(flightButtonPanel, BoxLayout.Y_AXIS)); // Vertical layout
         flightButtonPanel.setBackground(Color.WHITE);
-        flightButtonPanel.add(browseFlightsButton);
-        flightButtonPanel.add(addFlight);
-        flightButtonPanel.add(updateFlight);
-        flightButtonPanel.add(removeFlight);
 
-        // Add title and button panel to the main layout
+        // Add the buttons to the panel
+        flightButtonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+        flightButtonPanel.add(browseFlightsButton);
+        flightButtonPanel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
+        flightButtonPanel.add(addFlight);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(updateFlight);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(removeFlight);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(searchDepartureCityButton);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(searchDestinationCityButton);
+
+        // Set button colors and listeners
+        browseFlightsButton.setForeground(Color.WHITE);
+        browseFlightsButton.setBackground(Color.BLACK);
+        browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
+
+        addFlight.setForeground(Color.WHITE);
+        addFlight.setBackground(Color.BLACK);
+        addFlight.addActionListener(e -> addFlight());
+
+        updateFlight.setForeground(Color.WHITE);
+        updateFlight.setBackground(Color.BLACK);
+        updateFlight.addActionListener(e -> openUpdateFlightForm());
+
+        removeFlight.setForeground(Color.WHITE);
+        removeFlight.setBackground(Color.BLACK);
+        removeFlight.addActionListener(e -> removeFlight());
+
+        searchDepartureCityButton.setForeground(Color.WHITE);
+        searchDepartureCityButton.setBackground(Color.BLACK);
+        searchDepartureCityButton.addActionListener(e -> searchByDepartureCity());
+
+        searchDestinationCityButton.setForeground(Color.WHITE);
+        searchDestinationCityButton.setBackground(Color.BLACK);
+        searchDestinationCityButton.addActionListener(e -> searchByDestinationCity());
+
         this.setLayout(new BorderLayout());
         this.add(title, BorderLayout.NORTH); // Add title to the top
-        this.add(buttonPanel, BorderLayout.EAST); // Add button panel to the right
-
-        this.add(flightButtonPanel, BorderLayout.CENTER);
-
-
-        // Set up the main layout with BoxLayout
-        BoxLayout boxlayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        this.setLayout(boxlayout);
-        this.setBorder(new EmptyBorder(new Insets(100, 100, 100, 100)));
         
-         // Set up table for displaying flight data
-         flightTable = new JTable();
-         tableScrollPane = new JScrollPane(flightTable);
-         tableScrollPane.setVisible(false); // Initially hidden
-         this.add(tableScrollPane, BorderLayout.CENTER);
+        // Add title and flightButtonPanel to the main layout
+        this.add(flightButtonPanel, BorderLayout.WEST); // Place buttons on the left
+        this.add(buttonPanel, BorderLayout.SOUTH); // Add the logout and profile buttons to the right
+
+        // Set up the table for displaying flight data
+        flightTable = new JTable();
+        tableScrollPane = new JScrollPane(flightTable);
+        tableScrollPane.setVisible(false); // Initially hidden
+        this.add(tableScrollPane, BorderLayout.CENTER);
 
      }
 
@@ -293,9 +293,6 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         else if(e.getSource() == removeFlight){
             removeFlight();
         }
-       // else if (e.getSource() == updateFlight){
-       //     updateFlight();
-       // }
 	}
 
     void addFlight(){
@@ -337,6 +334,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
                 boolean result = controller.getDatabase().createFlight(flightID, flightNumber, depString, arrString, depTimeString, arrTimeString, cost, numSeats);
 
                 if (result){
+                	loadFlightData();
                     JOptionPane.showMessageDialog(this, "Flight has been added.");
                 }
                 else{
@@ -358,6 +356,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         boolean result = controller.getDatabase().deleteFlight(flightID);
 
         if (result){
+        	loadFlightData();
             JOptionPane.showMessageDialog(this, "Flight removed successfully");
         }
         else{
@@ -365,6 +364,61 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         }
 
 
+    }
+    
+    private void searchByDepartureCity() {
+        String city = JOptionPane.showInputDialog(this, "Enter the departing city:");
+        if (city == null || city.isEmpty()) return;
+
+        try {
+            ArrayList<Flight> flights = controller.getDatabase().getFlightsByDepartureCity(city);
+            if (flights.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No flights found for the departing city: " + city, "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                updateFlightTable(flights);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error searching for flights: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void searchByDestinationCity() {
+        String city = JOptionPane.showInputDialog(this, "Enter the destination city:");
+        if (city == null || city.isEmpty()) return;
+
+        try {
+            ArrayList<Flight> flights = controller.getDatabase().getFlightsByDestinationCity(city);
+            if (flights.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No flights found for the destination city: " + city, "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                updateFlightTable(flights);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error searching for flights: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void updateFlightTable(ArrayList<Flight> flights) {
+        String[] columnNames = {"Flight ID", "Flight Number", "Departure City", "Destination City",
+                                "Departure Time", "Arrival Time", "Price", "Seats Available"};
+        Object[][] tableData = new Object[flights.size()][columnNames.length];
+
+        for (int i = 0; i < flights.size(); i++) {
+            Flight flight = flights.get(i);
+            tableData[i][0] = flight.getFlightID();
+            tableData[i][1] = flight.getFlightNumber();
+            tableData[i][2] = flight.getDepartureCity();
+            tableData[i][3] = flight.getDestinationCity();
+            tableData[i][4] = flight.getDepartureTime();
+            tableData[i][5] = flight.getArrivalTime();
+            tableData[i][6] = flight.getPrice();
+            tableData[i][7] = flight.getSeatsAvailable();
+        }
+
+        flightTable.setModel(new DefaultTableModel(tableData, columnNames));
+        tableScrollPane.setVisible(true);
+        revalidate();
+        repaint();
     }
 
 

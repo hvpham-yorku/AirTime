@@ -2,6 +2,8 @@ package main.DB;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+
 import main.Models.Booking;
 import main.Models.Flight;
 import main.Models.Transaction;
@@ -418,6 +420,64 @@ public class DB implements DBInterface {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    // Get flight by departure city
+    public ArrayList<Flight> getFlightsByDepartureCity(String city) {
+        ArrayList<Flight> flights = new ArrayList<>();
+        String query = "SELECT * FROM flights WHERE departure_city = ?";
+        Connection conn = getConn();
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, city);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Flight flight = new Flight(
+                        resultSet.getInt("flight_id"),
+                        resultSet.getString("flight_number"),
+                        resultSet.getString("departure_city"),
+                        resultSet.getString("destination_city"),
+                        resultSet.getString("departure_time"),
+                        resultSet.getString("arrival_time"),
+                        resultSet.getDouble("price"),
+                        resultSet.getInt("seats_available")
+                    );
+                    flights.add(flight);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flights;
+    }
+
+    // Get flight by destination city
+    public ArrayList<Flight> getFlightsByDestinationCity(String city) {
+        ArrayList<Flight> flights = new ArrayList<>();
+        String query = "SELECT * FROM flights WHERE destination_city = ?";
+        Connection conn = getConn();
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, city);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Flight flight = new Flight(
+                        resultSet.getInt("flight_id"),
+                        resultSet.getString("flight_number"),
+                        resultSet.getString("departure_city"),
+                        resultSet.getString("destination_city"),
+                        resultSet.getString("departure_time"),
+                        resultSet.getString("arrival_time"),
+                        resultSet.getDouble("price"),
+                        resultSet.getInt("seats_available")
+                    );
+                    flights.add(flight);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flights;
     }
 
     // ========================================================================================================
