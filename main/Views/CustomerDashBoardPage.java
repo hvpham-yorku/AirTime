@@ -8,11 +8,13 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,6 +39,11 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		
 		String username;
 		JButton logout = new JButton("Logout");
+		private JButton btnTransactions = new JButton("Transactions"); // Profile
+	    private JButton browseFlightsButton = new JButton("Browse Flights");
+	    private JButton searchDepartureCityButton = new JButton("Search by Departure City");
+	    private JButton searchDestinationCityButton = new JButton("Search by Destination City");
+
 
 		JPanel buttons = new JPanel();
 		JPanel title = new JPanel();
@@ -45,11 +52,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		
 		JPanel main;
 		CardLayout card;
-		private final JButton btnNewButton = new JButton("Transactions"); //Profile
 
 	    private JTable flightTable;
-	    private DB database; // Add a reference to the DB instance
-	    private JButton browseFlightsButton = new JButton("Browse Flights");
 	    private JScrollPane tableScrollPane;
 		
 		
@@ -61,51 +65,60 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		
 		private void initialize() {
 			
-			titleMsg = new JLabel("Welcome " + controller.getCurrentUser().getUsername() + "!");
+			JLabel titleMsg = new JLabel("Welcome " + controller.getCurrentUser().getUsername() + "!");
 	        titleMsg.setFont(new Font("Arial", Font.BOLD, 18));
 
-	        title.setLayout(new BorderLayout()); // Set BorderLayout for title panel
-	        title.add(titleMsg, BorderLayout.NORTH); // Add title message to the center of the title panel
+	        JPanel title = new JPanel();
+	        title.setLayout(new BorderLayout());
+	        title.add(titleMsg, BorderLayout.NORTH);
 
-	        // Set up the logout button and its position in the right corner
 	        logout.setBackground(new Color(0, 0, 0));
 	        logout.setForeground(new Color(255, 255, 255));
 	        logout.addActionListener(e -> controller.logout());
 
-	        // Set up the Transactions button and its position in the left corner
-	        btnNewButton.setForeground(new Color(255, 255, 255));
-	        btnNewButton.setBackground(new Color(0, 0, 0));
-	        btnNewButton.addActionListener(e -> {
-	            // controller.TransactionsPage(controller.getCurrentUser()); --> NEED TO CREATE!!
+	        btnTransactions.setForeground(new Color(255, 255, 255));
+	        btnTransactions.setBackground(new Color(0, 0, 0));
+	        btnTransactions.addActionListener(e -> {
+	            // Navigate to Transactions Page
 	        });
 
-	        // Create a small panel to hold the two buttons
+	        // Create buttonPanel and set BoxLayout for vertical alignment
 	        JPanel buttonPanel = new JPanel();
-	        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
-	        buttonPanel.add(btnNewButton);
-	        buttonPanel.add(logout);
+	        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // Vertical layout
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+	        
+	        // Add other buttons to the panel
+	        browseFlightsButton.setForeground(Color.WHITE);
+	        browseFlightsButton.setBackground(Color.BLACK);
+	        browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
+	        buttonPanel.add(browseFlightsButton);
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 
-	        // Add title and button panel to the main layout
-	        this.setLayout(new BorderLayout());
-	        this.add(title, BorderLayout.NORTH); // Add title to the top
-	        this.add(buttonPanel, BorderLayout.EAST); // Add button panel to the right
+	        buttonPanel.add(searchDepartureCityButton);
+	        searchDepartureCityButton.setForeground(Color.WHITE);
+	        searchDepartureCityButton.setBackground(Color.BLACK);
+	        searchDepartureCityButton.addActionListener(e -> searchByDepartureCity());
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 
-	        // Set up the main layout with BoxLayout
-	        BoxLayout boxlayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-	        this.setLayout(boxlayout);
-	        this.setBorder(new EmptyBorder(new Insets(100, 100, 100, 100)));
-	 
-	         // Browse Flights button setup
-	         browseFlightsButton.setForeground(Color.WHITE);
-	         browseFlightsButton.setBackground(Color.BLACK);
-	         browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
-	         this.add(browseFlightsButton, BorderLayout.SOUTH);
-	 
-	         // Set up table for displaying flight data
-	         flightTable = new JTable();
-	         tableScrollPane = new JScrollPane(flightTable);
-	         tableScrollPane.setVisible(false); // Initially hidden
-	         this.add(tableScrollPane, BorderLayout.CENTER);
+	        buttonPanel.add(searchDestinationCityButton);
+	        searchDestinationCityButton.setForeground(Color.WHITE);
+	        searchDestinationCityButton.setBackground(Color.BLACK);
+	        searchDestinationCityButton.addActionListener(e -> searchByDestinationCity());
+
+	        // Optionally, add some spacing between buttons for better layout
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+
+	        setLayout(new BorderLayout());
+	        add(title, BorderLayout.NORTH);
+	        add(buttonPanel, BorderLayout.WEST); // Adjust panel placement as needed
+
+	        add(logout, BorderLayout.SOUTH);
+	        buttonPanel.add(btnTransactions);
+	        
+	        flightTable = new JTable();
+	        tableScrollPane = new JScrollPane(flightTable);
+	        tableScrollPane.setVisible(false);
+	        add(tableScrollPane, BorderLayout.CENTER);
 	     }
 
 	     private void toggleBrowseFlights() {
@@ -155,7 +168,62 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        }
 	    }
 		
-		
+	    private void searchByDepartureCity() {
+	        String city = JOptionPane.showInputDialog(this, "Enter the departing city:");
+	        if (city == null || city.isEmpty()) return;
+
+	        try {
+	            ArrayList<Flight> flights = controller.getDatabase().getFlightsByDepartureCity(city);
+	            if (flights.isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "No flights found for the departing city: " + city, "Error", JOptionPane.ERROR_MESSAGE);
+	            } else {
+	                updateFlightTable(flights);
+	            }
+	        } catch (Exception e) {
+	            JOptionPane.showMessageDialog(this, "Error searching for flights: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+
+	    private void searchByDestinationCity() {
+	        String city = JOptionPane.showInputDialog(this, "Enter the destination city:");
+	        if (city == null || city.isEmpty()) return;
+
+	        try {
+	            ArrayList<Flight> flights = controller.getDatabase().getFlightsByDestinationCity(city);
+	            if (flights.isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "No flights found for the destination city: " + city, "Error", JOptionPane.ERROR_MESSAGE);
+	            } else {
+	                updateFlightTable(flights);
+	            }
+	        } catch (Exception e) {
+	            JOptionPane.showMessageDialog(this, "Error searching for flights: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	    
+	    private void updateFlightTable(ArrayList<Flight> flights) {
+	        String[] columnNames = {"Flight ID", "Flight Number", "Departure City", "Destination City",
+	                                "Departure Time", "Arrival Time", "Price", "Seats Available"};
+	        Object[][] tableData = new Object[flights.size()][columnNames.length];
+
+	        for (int i = 0; i < flights.size(); i++) {
+	            Flight flight = flights.get(i);
+	            tableData[i][0] = flight.getFlightID();
+	            tableData[i][1] = flight.getFlightNumber();
+	            tableData[i][2] = flight.getDepartureCity();
+	            tableData[i][3] = flight.getDestinationCity();
+	            tableData[i][4] = flight.getDepartureTime();
+	            tableData[i][5] = flight.getArrivalTime();
+	            tableData[i][6] = flight.getPrice();
+	            tableData[i][7] = flight.getSeatsAvailable();
+	        }
+
+	        flightTable.setModel(new DefaultTableModel(tableData, columnNames));
+	        tableScrollPane.setVisible(true);
+	        revalidate();
+	        repaint();
+	    }
+
+	    
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
