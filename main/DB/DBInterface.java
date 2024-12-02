@@ -1,5 +1,7 @@
 package main.DB;
 
+import java.time.LocalDateTime;
+
 import main.Models.Booking;
 import main.Models.Flight;
 import main.Models.Transaction;
@@ -26,12 +28,12 @@ public interface DBInterface {
 
     // Flight Management Methods
     public Boolean createFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-            String departureTime, String arrivalTime, double price, int seatsAvailable);
+    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
 
     public Flight getFlight(int flightID);
 
     public Boolean updateFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-            String departureTime, String arrivalTime, double price, int seatsAvailable);
+    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
 
     public Boolean deleteFlight(int flightID);
 

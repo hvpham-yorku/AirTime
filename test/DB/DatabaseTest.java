@@ -1,6 +1,9 @@
 package test.DB;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import main.DB.DB;
 import main.Models.User;
 
@@ -49,29 +52,48 @@ public class DatabaseTest {
             System.out.println("Failed to delete user.");
         }
 
+        // Define a formatter for consistent date-time parsing
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         // Test flight methods
         int flightID = 101;
-        boolean flightCreated = db.createFlight(101, "AI100", "Toronto", "New York", "2024-12-10 08:00", "2024-12-10 10:00", 300.00, 150);
-        if (flightCreated) {
-            System.out.println("Flight created successfully.");
-        } else {
-            System.out.println("Failed to create flight.");
-        }
+        try {
+            // Parse strings into LocalDateTime objects
+            LocalDateTime departureTime = LocalDateTime.parse("2024-12-10 08:00", formatter);
+            LocalDateTime arrivalTime = LocalDateTime.parse("2024-12-10 10:00", formatter);
 
-        db.getFlight(flightID);  // Assuming getFlight prints the flight details if found
+            // Test createFlight
+            boolean flightCreated = db.createFlight(flightID, "AI100", "Toronto", "New York", departureTime, arrivalTime, 300.00, 150);
+            if (flightCreated) {
+                System.out.println("Flight created successfully.");
+            } else {
+                System.out.println("Failed to create flight.");
+            }
 
-        boolean flightUpdated = db.updateFlight(101, "AI100", "Toronto", "Los Angeles", "2024-12-12 08:00", "2024-12-12 10:00", 350.00, 140);
-        if (flightUpdated) {
-            System.out.println("Flight updated successfully.");
-        } else {
-            System.out.println("Failed to update flight.");
-        }
+            // Test getFlight
+            db.getFlight(flightID); // Assuming this method prints flight details
 
-        boolean flightDeleted = db.deleteFlight(101);
-        if (flightDeleted) {
-            System.out.println("Flight deleted successfully.");
-        } else {
-            System.out.println("Failed to delete flight.");
+            // Test updateFlight
+            LocalDateTime updatedDepartureTime = LocalDateTime.parse("2024-12-12 08:00", formatter);
+            LocalDateTime updatedArrivalTime = LocalDateTime.parse("2024-12-12 10:00", formatter);
+            boolean flightUpdated = db.updateFlight(flightID, "AI100", "Toronto", "Los Angeles", updatedDepartureTime, updatedArrivalTime, 350.00, 140);
+            if (flightUpdated) {
+                System.out.println("Flight updated successfully.");
+            } else {
+                System.out.println("Failed to update flight.");
+            }
+
+            // Test deleteFlight
+            boolean flightDeleted = db.deleteFlight(flightID);
+            if (flightDeleted) {
+                System.out.println("Flight deleted successfully.");
+            } else {
+                System.out.println("Failed to delete flight.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
 
         // Test transaction methods

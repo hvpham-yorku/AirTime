@@ -9,7 +9,9 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -41,7 +43,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	    private JButton browseFlightsButton = new JButton("Browse Flights");
 	    private JButton searchDepartureCityButton = new JButton("Search by Departure City");
 	    private JButton searchDestinationCityButton = new JButton("Search by Destination City");
-
+	    private JButton searchShortestTravelTimeButton = new JButton("Shortest Travel Time");
+	    private JButton searchTravelTimeButton = new JButton("Search Travel Time by cities");
 
 		JPanel buttons = new JPanel();
 		JPanel title = new JPanel();
@@ -119,7 +122,20 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        filterByPriceButton.setBackground(Color.BLACK);
 	        filterByPriceButton.addActionListener(e -> filterByPriceRange());
 	        buttonPanel.add(filterByPriceButton);
-
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+	        
+	        // Set up the Shortest Travel Time button
+	        searchShortestTravelTimeButton.setForeground(Color.WHITE);
+	        searchShortestTravelTimeButton.setBackground(Color.BLACK);
+	        searchShortestTravelTimeButton.addActionListener(e -> searchShortestTravelTime());
+	        buttonPanel.add(searchShortestTravelTimeButton);
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+	        
+	        searchTravelTimeButton.setForeground(Color.WHITE);
+	        searchTravelTimeButton.setBackground(Color.BLACK);
+	        searchTravelTimeButton.addActionListener(e -> searchTravelTime());
+	        buttonPanel.add(searchTravelTimeButton);
+	        
 	        // Optionally, add some spacing between buttons for better layout
 	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 	        buttonPanel.add(transactions);
@@ -268,6 +284,44 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 	        } catch (NumberFormatException e) {
 	            JOptionPane.showMessageDialog(this, "Please enter valid numeric values for prices.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+
+	    private void searchShortestTravelTime() {
+	    	try {
+	            ArrayList<Flight> flights = controller.getDatabase().getShortestTravelTimeFlights();
+	            if (flights.isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "No flights found with shortest travel time.");
+	            } else {
+	                updateFlightTable(flights); // Reuse your existing method
+	            }
+	        } catch (SQLException ex) {
+	            JOptionPane.showMessageDialog(this, "Error fetching flights with shortest travel time: " + ex.getMessage());
+	        }
+	    }
+	    
+	    private void searchTravelTime() {
+	        // Show input dialogs to get departure city and destination city
+	        String departureCity = JOptionPane.showInputDialog(this, "Enter Departure City:");
+	        String destinationCity = JOptionPane.showInputDialog(this, "Enter Destination City:");
+
+	        // Check if both fields are filled
+	        if (departureCity == null || destinationCity == null || departureCity.trim().isEmpty() || destinationCity.trim().isEmpty()) {
+	            JOptionPane.showMessageDialog(this, "Please enter both departure and destination cities.", "Error", JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+
+	        // Call the database method to find the shortest travel time flight
+	        Flight shortestFlight = controller.getDatabase().getShortestTravelTimeFlight(departureCity.trim(), destinationCity.trim());
+
+	        // Check if a flight was found and update the UI
+	        if (shortestFlight != null) {
+	            ArrayList<Flight> flights = new ArrayList<>();
+	            flights.add(shortestFlight);
+	            updateFlightTable(flights); // Assumes you have this method to update the table
+	            JOptionPane.showMessageDialog(this, "Shortest travel time flight displayed.", "Info", JOptionPane.INFORMATION_MESSAGE);
+	        } else {
+	            JOptionPane.showMessageDialog(this, "No flights found between these cities.", "Info", JOptionPane.INFORMATION_MESSAGE);
 	        }
 	    }
 
