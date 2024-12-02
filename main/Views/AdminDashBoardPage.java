@@ -32,9 +32,9 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     JButton addFlight = new JButton("Add Flight");
     JButton removeFlight = new JButton("Remove Flight");
     JButton updateFlight = new JButton("Update Flight");
-    private JButton searchDepartureCityButton = new JButton("Search by Departure City");
-    private JButton searchDestinationCityButton = new JButton("Search by Destination City");
-
+    JButton searchDepartureCityButton = new JButton("Search by Departure City");
+    JButton searchDestinationCityButton = new JButton("Search by Destination City");
+    JButton filterByPriceButton = new JButton("Filter by Price");
 
 	JPanel buttons = new JPanel();
 	JPanel title = new JPanel();
@@ -103,6 +103,8 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         flightButtonPanel.add(searchDepartureCityButton);
         flightButtonPanel.add(Box.createVerticalStrut(10));
         flightButtonPanel.add(searchDestinationCityButton);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(filterByPriceButton);
 
         // Set button colors and listeners
         browseFlightsButton.setForeground(Color.WHITE);
@@ -128,6 +130,10 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         searchDestinationCityButton.setForeground(Color.WHITE);
         searchDestinationCityButton.setBackground(Color.BLACK);
         searchDestinationCityButton.addActionListener(e -> searchByDestinationCity());
+
+        filterByPriceButton.setForeground(Color.WHITE);
+        filterByPriceButton.setBackground(Color.BLACK);
+        filterByPriceButton.addActionListener(e -> filterByPriceRange());
 
         this.setLayout(new BorderLayout());
         this.add(title, BorderLayout.NORTH); // Add title to the top
@@ -419,6 +425,40 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         tableScrollPane.setVisible(true);
         revalidate();
         repaint();
+    }
+    
+    private void filterByPriceRange() {
+        String minPriceInput = JOptionPane.showInputDialog(this, "Enter the minimum price:");
+        if (minPriceInput == null || minPriceInput.isEmpty()) return;
+
+        String maxPriceInput = JOptionPane.showInputDialog(this, "Enter the maximum price:");
+        if (maxPriceInput == null || maxPriceInput.isEmpty()) return;
+
+        try {
+            double minPrice = Double.parseDouble(minPriceInput);
+            double maxPrice = Double.parseDouble(maxPriceInput);
+
+            if (minPrice < 0) {
+                JOptionPane.showMessageDialog(this, "Minimum price cannot be less than $0.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (minPrice > maxPrice) {
+                JOptionPane.showMessageDialog(this, "Minimum price cannot be greater than maximum price.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            ArrayList<Flight> filteredFlights = controller.getDatabase().getFlightsByPriceRange(minPrice, maxPrice);
+
+            if (filteredFlights.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No flights found within the given price range.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                updateFlightTable(filteredFlights);
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numeric values for prices.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 

@@ -479,7 +479,41 @@ public class DB implements DBInterface {
         }
         return flights;
     }
+    
+    // Gets all flights in price range
+    public ArrayList<Flight> getFlightsByPriceRange(double minPrice, double maxPrice) {
+        ArrayList<Flight> flights = new ArrayList<>();
+        String query = "SELECT * FROM flights WHERE price BETWEEN ? AND ?";
+        Connection conn = getConn();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDouble(1, minPrice);
+            stmt.setDouble(2, maxPrice);
+            ResultSet rs = stmt.executeQuery();
 
+            while (rs.next()) {
+                flights.add(mapResultSetToFlight(rs)); // Helper function
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flights;
+    }
+
+    // Helper function intended to convert a ResultSet row into a Flight object
+    private Flight mapResultSetToFlight(ResultSet rs) throws SQLException {
+        int flightId = rs.getInt("flight_id");
+        String flightNumber = rs.getString("flight_number");
+        String departureCity = rs.getString("departure_city");
+        String destinationCity = rs.getString("destination_city");
+        String departureTime = rs.getString("departure_time");
+        String arrivalTime = rs.getString("arrival_time");
+        double price = rs.getDouble("price");
+        int seatsAvailable = rs.getInt("seats_available");
+        
+        return new Flight(flightId, flightNumber, departureCity, destinationCity, departureTime, arrivalTime, price, seatsAvailable);
+    }
+
+    
     // ========================================================================================================
     // BOOKING METHODS
     // ========================================================================================================

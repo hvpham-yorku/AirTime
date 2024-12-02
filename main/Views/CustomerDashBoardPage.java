@@ -1,6 +1,3 @@
-/**
- * 
- */
 package main.Views;
 
 import java.awt.BorderLayout;
@@ -39,7 +36,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		
 		String username;
 		JButton logout = new JButton("Logout");
-		private JButton btnTransactions = new JButton("Transactions"); // Profile
+		private JButton back = new JButton("Back");
+		private JButton transactions = new JButton("Transactions"); 
 	    private JButton browseFlightsButton = new JButton("Browse Flights");
 	    private JButton searchDepartureCityButton = new JButton("Search by Departure City");
 	    private JButton searchDestinationCityButton = new JButton("Search by Destination City");
@@ -72,13 +70,23 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        title.setLayout(new BorderLayout());
 	        title.add(titleMsg, BorderLayout.NORTH);
 
-	        logout.setBackground(new Color(0, 0, 0));
-	        logout.setForeground(new Color(255, 255, 255));
+	        logout.setBackground(Color.BLACK);
+	        logout.setForeground(Color.WHITE);
 	        logout.addActionListener(e -> controller.logout());
+	        
+	        back.setForeground(Color.WHITE);
+	        back.setBackground(Color.BLACK);
+	        back.addActionListener(e -> controller.logout());
+	        
+	        // Create a small panel to hold the two buttons
+	        JPanel bottomPanel = new JPanel();
+	        bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
+	        bottomPanel.add(back);
+	        bottomPanel.add(logout);
 
-	        btnTransactions.setForeground(new Color(255, 255, 255));
-	        btnTransactions.setBackground(new Color(0, 0, 0));
-	        btnTransactions.addActionListener(e -> {
+	        transactions.setForeground(Color.WHITE);
+	        transactions.setBackground(Color.BLACK);
+	        transactions.addActionListener(e -> {
 	            // Navigate to Transactions Page
 	        });
 
@@ -104,16 +112,22 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        searchDestinationCityButton.setForeground(Color.WHITE);
 	        searchDestinationCityButton.setBackground(Color.BLACK);
 	        searchDestinationCityButton.addActionListener(e -> searchByDestinationCity());
+	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+	        
+	        JButton filterByPriceButton = new JButton("Filter by Price");
+	        filterByPriceButton.setForeground(Color.WHITE);
+	        filterByPriceButton.setBackground(Color.BLACK);
+	        filterByPriceButton.addActionListener(e -> filterByPriceRange());
+	        buttonPanel.add(filterByPriceButton);
 
 	        // Optionally, add some spacing between buttons for better layout
 	        buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
-
+	        buttonPanel.add(transactions);
+	        
 	        setLayout(new BorderLayout());
 	        add(title, BorderLayout.NORTH);
-	        add(buttonPanel, BorderLayout.WEST); // Adjust panel placement as needed
-
-	        add(logout, BorderLayout.SOUTH);
-	        buttonPanel.add(btnTransactions);
+	        add(buttonPanel, BorderLayout.WEST);
+	        add(bottomPanel, BorderLayout.SOUTH);
 	        
 	        flightTable = new JTable();
 	        tableScrollPane = new JScrollPane(flightTable);
@@ -221,6 +235,40 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        tableScrollPane.setVisible(true);
 	        revalidate();
 	        repaint();
+	    }
+
+	    private void filterByPriceRange() {
+	        String minPriceInput = JOptionPane.showInputDialog(this, "Enter the minimum price:");
+	        if (minPriceInput == null || minPriceInput.isEmpty()) return;
+
+	        String maxPriceInput = JOptionPane.showInputDialog(this, "Enter the maximum price:");
+	        if (maxPriceInput == null || maxPriceInput.isEmpty()) return;
+
+	        try {
+	            double minPrice = Double.parseDouble(minPriceInput);
+	            double maxPrice = Double.parseDouble(maxPriceInput);
+
+	            if (minPrice < 0) {
+	                JOptionPane.showMessageDialog(this, "Minimum price cannot be less than $0.", "Error", JOptionPane.ERROR_MESSAGE);
+	                return;
+	            }
+
+	            if (minPrice > maxPrice) {
+	                JOptionPane.showMessageDialog(this, "Minimum price cannot be greater than maximum price.", "Error", JOptionPane.ERROR_MESSAGE);
+	                return;
+	            }
+
+	            ArrayList<Flight> filteredFlights = controller.getDatabase().getFlightsByPriceRange(minPrice, maxPrice);
+
+	            if (filteredFlights.isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "No flights found within the given price range.", "Error", JOptionPane.ERROR_MESSAGE);
+	            } else {
+	                updateFlightTable(filteredFlights);
+	            }
+
+	        } catch (NumberFormatException e) {
+	            JOptionPane.showMessageDialog(this, "Please enter valid numeric values for prices.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
 	    }
 
 	    
