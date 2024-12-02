@@ -1,10 +1,8 @@
-/**
- * 
- */
 package main.Views;
 
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,12 +10,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.toedter.calendar.JDateChooser;
+
 import main.Controller.Controller;
 import main.DB.DB;
 import main.Models.Flight;
@@ -40,7 +43,8 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     private JButton filterByPriceButton = new JButton("Filter by Price");
     private JButton searchShortestTravelTimeButton = new JButton("Shortest Travel Time");
     private JButton searchTravelTimeButton = new JButton("Search Travel Time by cities");
-
+    private JButton searchByDateButton = new JButton("Search by Dates");
+    
 	JPanel buttons = new JPanel();
 	JPanel title = new JPanel();
 
@@ -114,6 +118,8 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         flightButtonPanel.add(searchShortestTravelTimeButton);
         flightButtonPanel.add(Box.createVerticalStrut(10));
         flightButtonPanel.add(searchTravelTimeButton);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(searchByDateButton);
         
         // Set button colors and listeners
         browseFlightsButton.setForeground(Color.WHITE);
@@ -152,6 +158,10 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         searchTravelTimeButton.setBackground(Color.BLACK);
         searchTravelTimeButton.addActionListener(e -> searchTravelTime());
 
+        searchByDateButton.setForeground(Color.WHITE);
+        searchByDateButton.setBackground(Color.BLACK);
+        searchByDateButton.addActionListener(e -> showDateInputDialog());
+        
         this.setLayout(new BorderLayout());
         this.add(title, BorderLayout.NORTH); // Add title to the top
         
@@ -506,20 +516,90 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
             return;
         }
 
-        // Call the database method to find the shortest travel time flight
-        Flight shortestFlight = controller.getDatabase().getShortestTravelTimeFlight(departureCity.trim(), destinationCity.trim());
+        // Call the database method to find all flights between the cities
+        ArrayList<Flight> flights = controller.getDatabase().getShortestTravelTimeFlight(departureCity.trim(), destinationCity.trim());
 
-        // Check if a flight was found and update the UI
-        if (shortestFlight != null) {
-            ArrayList<Flight> flights = new ArrayList<>();
-            flights.add(shortestFlight);
+        // Check if any flights were found and update the UI
+        if (flights != null && !flights.isEmpty()) {
             updateFlightTable(flights); // Assumes you have this method to update the table
-            JOptionPane.showMessageDialog(this, "Shortest travel time flight displayed.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, flights.size() + " flight(s) found and displayed.", "Info", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "No flights found between these cities.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
+    private void showDateInputDialog() {
+        // Create a dialog for the user to input the departure and arrival dates
+    	JFrame parentFrame = new JFrame();  // Create a parent frame 
+    	JDialog dateDialog = new JDialog(parentFrame, "Select Dates", true);
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+
+        JLabel departureLabel = new JLabel("Departure Date: ");
+        JLabel arrivalLabel = new JLabel("Arrival Date: ");
+
+        // Date pickers for departure and arrival dates
+        JDateChooser departureDatePicker = new JDateChooser();
+        JDateChooser arrivalDatePicker = new JDateChooser();
+
+        // Button to confirm the date selection
+        JButton submitButton = new JButton("Search Flights");
+
+        panel.add(departureLabel);
+        panel.add(departureDatePicker);
+        panel.add(arrivalLabel);
+        panel.add(arrivalDatePicker);
+        panel.add(new JLabel());  // Empty space for alignment
+        panel.add(submitButton);
+
+        // Action listener for the submit button
+        submitButton.addActionListener(e -> {
+            LocalDate departureDate = getDateFromDateChooser(departureDatePicker);
+            LocalDate arrivalDate = getDateFromDateChooser(arrivalDatePicker);
+
+            // Validate the dates
+            if (departureDate != null && departureDate.isBefore(LocalDate.now())) {
+                JOptionPane.showMessageDialog(dateDialog, "Departure date cannot be in the past.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (arrivalDate != null && arrivalDate.isBefore(departureDate)) {
+                JOptionPane.showMessageDialog(dateDialog, "Arrival date cannot be before the departure date.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Call the method to filter flights based on the dates
+            searchFlightsByDates(departureDate, arrivalDate);
+
+            // Close the dialog after the search
+            dateDialog.dispose();
+        });
+
+        // Add the panel to the dialog and set properties
+        dateDialog.add(panel);
+        dateDialog.setSize(300, 200);
+        dateDialog.setLocationRelativeTo(this);
+        dateDialog.setVisible(true);
+    }
+
+    private LocalDate getDateFromDateChooser(JDateChooser dateChooser) {
+        Date date = dateChooser.getDate();
+        if (date != null) {
+            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        return null;  // Return null if no date is selected
+    }
+
+    private void searchFlightsByDates(LocalDate departureDate, LocalDate arrivalDate) {
+        // Call your filtering logic here (e.g., calling the database with the selected dates)
+        ArrayList<Flight> flights = controller.getDatabase().getFlightsByDateRange(departureDate, arrivalDate);
+
+        if (flights != null && !flights.isEmpty()) {
+            updateFlightTable(flights);
+            JOptionPane.showMessageDialog(this, "Flights filtered by date.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No flights found for the given dates.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
 
 }
