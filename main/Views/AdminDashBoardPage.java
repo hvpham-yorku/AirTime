@@ -517,7 +517,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         }
 
         // Call the database method to find all flights between the cities
-        ArrayList<Flight> flights = controller.getDatabase().getShortestTravelTimeFlight(departureCity.trim(), destinationCity.trim());
+        ArrayList<Flight> flights = controller.getDatabase().getShortestTravelTimeFlights(departureCity.trim(), destinationCity.trim());
 
         // Check if any flights were found and update the UI
         if (flights != null && !flights.isEmpty()) {
