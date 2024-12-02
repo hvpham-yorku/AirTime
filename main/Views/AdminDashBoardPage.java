@@ -529,7 +529,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     }
 
     private void showDateInputDialog() {
-        // Create a dialog for the user to input the departure and arrival dates
+        // Dialog for the user to input the departure and arrival dates
     	JFrame parentFrame = new JFrame();  // Create a parent frame 
     	JDialog dateDialog = new JDialog(parentFrame, "Select Dates", true);
         JPanel panel = new JPanel(new GridLayout(3, 2));
@@ -590,7 +590,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     }
 
     private void searchFlightsByDates(LocalDate departureDate, LocalDate arrivalDate) {
-        // Call your filtering logic here (e.g., calling the database with the selected dates)
+        // Calling the database with the selected dates
         ArrayList<Flight> flights = controller.getDatabase().getFlightsByDateRange(departureDate, arrivalDate);
 
         if (flights != null && !flights.isEmpty()) {
