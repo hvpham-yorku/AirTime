@@ -2,6 +2,7 @@ package main.DB;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -564,13 +565,13 @@ public class DB implements DBInterface {
     }
 
     // Gets flights with shortest travel time between two cities
-    public Flight getShortestTravelTimeFlight(String departureCity, String destinationCity) {
-        Flight shortestFlight = null;
+    public ArrayList<Flight> getShortestTravelTimeFlights(String departureCity, String destinationCity) {
+    	ArrayList<Flight> shortestFlights = new ArrayList<>();
         String SQL = "SELECT *, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) AS travel_duration " +
                      "FROM flights " +
                      "WHERE departure_city = ? AND destination_city = ? " +
-                     "ORDER BY travel_duration ASC " +
-                     "LIMIT 10";
+                     "ORDER BY travel_duration ASC ";
+                     // + "LIMIT 1";
         Connection conn = getConn();
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
             
@@ -578,13 +579,56 @@ public class DB implements DBInterface {
             pstmt.setString(2, destinationCity);
 
             ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                shortestFlight = mapResultSetToFlight(rs); // helper function
+            while (rs.next()) { // Process all rows from the ResultSet
+                //shortestFlight = mapResultSetToFlight(rs); // helper function
+            	Flight flight = mapResultSetToFlight(rs); // helper function
+            	shortestFlights.add(flight);
             }
         } catch (SQLException e) {
             System.out.println("Error fetching the shortest travel time flight: " + e.getMessage());
         }
-        return shortestFlight;
+        return shortestFlights;
+    }
+    
+    // Gets flights by dates
+    public ArrayList<Flight> getFlightsByDateRange(LocalDate departureDate, LocalDate arrivalDate) {
+        ArrayList<Flight> flights = new ArrayList<>();
+        String query = "SELECT * FROM flights WHERE departure_time >= ? AND arrival_time <= ?";
+        
+        // If arrival date is null, only filter by departure date
+        if (arrivalDate == null) {
+            query = "SELECT * FROM flights WHERE departure_time >= ?";
+        }
+
+        Connection conn = getConn();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            if (arrivalDate == null) {
+                stmt.setTimestamp(1, Timestamp.valueOf(departureDate.atStartOfDay()));
+            } else {
+                stmt.setTimestamp(1, Timestamp.valueOf(departureDate.atStartOfDay()));
+                stmt.setTimestamp(2, Timestamp.valueOf(arrivalDate.atStartOfDay()));
+            }
+            
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Flight flight = new Flight(
+                    rs.getInt("flight_id"),
+                    rs.getString("flight_number"),
+                    rs.getString("departure_city"),
+                    rs.getString("destination_city"),
+                    rs.getTimestamp("departure_time").toLocalDateTime(),
+                    rs.getTimestamp("arrival_time").toLocalDateTime(),
+                    rs.getDouble("price"),
+                    rs.getInt("seats_available")
+                );
+                flights.add(flight);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return flights;
     }
 
     // Helper function intended to convert a ResultSet row into a Flight object
