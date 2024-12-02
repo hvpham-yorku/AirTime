@@ -3,6 +3,7 @@ package main.Models;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import main.DB.DB;
 
@@ -16,13 +17,13 @@ public class Flight {
     private String flightNumber;
     private String departureCity;
     private String destinationCity;
-    private String departureTime;
-    private String arrivalTime;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
     private double price;
     private int seatsAvailable;
 
     public Flight(int flightID, String flightNumber, String departureCity, String destinationCity,
-                  String departureTime, String arrivalTime, double price, int seatsAvailable) {
+                  LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable) {
         this.flightID = flightID;
         this.flightNumber = flightNumber;
         this.departureCity = departureCity;
@@ -50,11 +51,11 @@ public class Flight {
         return destinationCity;
     }
 
-    public String getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
@@ -83,11 +84,11 @@ public class Flight {
         this.destinationCity = destinationCity;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
@@ -106,35 +107,6 @@ public class Flight {
     public String getDestination() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    public ArrayList<Flight> getAllFlights() {
-    ArrayList<Flight> flights = new ArrayList<>();
-    String SQL = "SELECT * FROM flights";
-
-    try (PreparedStatement stmt = DB.getConn().prepareStatement(SQL);
-         ResultSet rs = stmt.executeQuery()) {
-
-        while (rs.next()) {
-            Flight flight = new Flight(
-                rs.getInt("flight_id"),
-                rs.getString("flight_number"),
-                rs.getString("departure_city"),
-                rs.getString("destination_city"),
-                rs.getString("departure_time"),
-                rs.getString("arrival_time"),
-                rs.getDouble("price"),
-                rs.getInt("seats_available")
-            );
-            flights.add(flight);
-        }
-    } catch (SQLException e) {
-        System.out.println("Error fetching all flights: " + e.getMessage());
-        e.printStackTrace();
-    }
-
-    return flights;
-}
-
     
 }
 

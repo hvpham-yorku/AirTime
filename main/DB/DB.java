@@ -2,7 +2,9 @@ package main.DB;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import main.Models.Booking;
 import main.Models.Flight;
@@ -285,7 +287,7 @@ public class DB implements DBInterface {
     // Create flight
     @Override
     public Boolean createFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-            String departureTime, String arrivalTime, double price, int seatsAvailable) {
+    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable) {
 
         if (flightNumber == null || flightNumber.isEmpty() || departureCity == null || departureCity.isEmpty() ||
                 destinationCity == null || destinationCity.isEmpty() || departureTime == null || arrivalTime == null) {
@@ -304,8 +306,8 @@ public class DB implements DBInterface {
             pstmt.setString(2, flightNumber);
             pstmt.setString(3, departureCity);
             pstmt.setString(4, destinationCity);
-            pstmt.setString(5, departureTime);
-            pstmt.setString(6, arrivalTime);
+            pstmt.setTimestamp(4, Timestamp.valueOf(departureTime)); // Convert LocalDateTime to Timestamp
+            pstmt.setTimestamp(5, Timestamp.valueOf(arrivalTime));   // Convert LocalDateTime to Timestamp
             pstmt.setDouble(7, price);
             pstmt.setInt(8, seatsAvailable);
 
@@ -340,8 +342,8 @@ public class DB implements DBInterface {
                 String flightNumber = rs.getString("flight_number");
                 String departureCity = rs.getString("departure_city");
                 String destinationCity = rs.getString("destination_city");
-                String departureTime = rs.getString("departure_time");
-                String arrivalTime = rs.getString("arrival_time");
+                LocalDateTime departureTime = rs.getTimestamp("departure_time").toLocalDateTime();
+                LocalDateTime arrivalTime = rs.getTimestamp("arrival_time").toLocalDateTime();
                 double price = rs.getDouble("price");
                 int seatsAvailable = rs.getInt("seats_available");
 
@@ -360,7 +362,7 @@ public class DB implements DBInterface {
     // Update a flight
     @Override
     public Boolean updateFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-            String departureTime, String arrivalTime, double price, int seatsAvailable) {
+    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable) {
 
         if (flightNumber == null || flightNumber.isEmpty() || departureCity == null || departureCity.isEmpty() ||
                 destinationCity == null || destinationCity.isEmpty() || departureTime == null || arrivalTime == null) {
@@ -378,8 +380,8 @@ public class DB implements DBInterface {
             pstmt.setString(1, flightNumber);
             pstmt.setString(2, departureCity);
             pstmt.setString(3, destinationCity);
-            pstmt.setString(4, departureTime);
-            pstmt.setString(5, arrivalTime);
+            pstmt.setTimestamp(4, Timestamp.valueOf(departureTime)); // Convert LocalDateTime to Timestamp
+            pstmt.setTimestamp(5, Timestamp.valueOf(arrivalTime));   // Convert LocalDateTime to Timestamp
             pstmt.setDouble(6, price);
             pstmt.setInt(7, seatsAvailable);
             pstmt.setInt(8, flightID);
@@ -387,13 +389,19 @@ public class DB implements DBInterface {
             int rowsUpdated = pstmt.executeUpdate();
             //conn.close();
 
-            return rowsUpdated > 0;
+            //return rowsUpdated > 0;
 
+            if (rowsUpdated > 0) {
+                System.out.println("Flight successfully updated (updateFlight() - DB.java)");
+                return true;
+            } else {
+                System.out.println("No rows updated. Check flight ID (updateFlight() - DB.java)");
+                return false;
+            }
         } catch (SQLException e) {
-            System.out.println("Error updating flight - ( updateFlight() - DB.java ) \n");
-            e.printStackTrace();
+            System.out.println("Error while updating flight: " + e.getMessage() + " (updateFlight() - DB.java)");
+            return false;
         }
-        return false;
     }
 
     // Delete flight by flightID
@@ -422,6 +430,35 @@ public class DB implements DBInterface {
         return false;
     }
     
+    // Get all flights
+    public ArrayList<Flight> getAllFlights() {
+    ArrayList<Flight> flights = new ArrayList<>();
+    String SQL = "SELECT * FROM flights";
+    Connection conn = getConn();
+    try (PreparedStatement stmt = conn.prepareStatement(SQL);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Flight flight = new Flight(
+                rs.getInt("flight_id"),
+                rs.getString("flight_number"),
+                rs.getString("departure_city"),
+                rs.getString("destination_city"),
+                rs.getTimestamp("departure_time").toLocalDateTime(),
+                rs.getTimestamp("arrival_time").toLocalDateTime(),
+                rs.getDouble("price"),
+                rs.getInt("seats_available")
+            );
+            flights.add(flight);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error fetching all flights: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    return flights;
+}
+    
     // Get flight by departure city
     public ArrayList<Flight> getFlightsByDepartureCity(String city) {
         ArrayList<Flight> flights = new ArrayList<>();
@@ -437,8 +474,8 @@ public class DB implements DBInterface {
                         resultSet.getString("flight_number"),
                         resultSet.getString("departure_city"),
                         resultSet.getString("destination_city"),
-                        resultSet.getString("departure_time"),
-                        resultSet.getString("arrival_time"),
+                        resultSet.getTimestamp("departure_time").toLocalDateTime(),
+                        resultSet.getTimestamp("arrival_time").toLocalDateTime(),
                         resultSet.getDouble("price"),
                         resultSet.getInt("seats_available")
                     );
@@ -466,8 +503,8 @@ public class DB implements DBInterface {
                         resultSet.getString("flight_number"),
                         resultSet.getString("departure_city"),
                         resultSet.getString("destination_city"),
-                        resultSet.getString("departure_time"),
-                        resultSet.getString("arrival_time"),
+                        resultSet.getTimestamp("departure_time").toLocalDateTime(),
+                        resultSet.getTimestamp("arrival_time").toLocalDateTime(),
                         resultSet.getDouble("price"),
                         resultSet.getInt("seats_available")
                     );
@@ -498,6 +535,57 @@ public class DB implements DBInterface {
         }
         return flights;
     }
+    
+    // Gets flights with shortest travel time
+    public ArrayList<Flight> getShortestTravelTimeFlights() throws SQLException {
+        ArrayList<Flight> flights = new ArrayList<>();
+        String query = "SELECT flight_id, flight_number, departure_city, destination_city, departure_time, " +
+                "arrival_time, price, seats_available " +
+                "FROM flights ORDER BY TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) ASC";
+        Connection conn = getConn();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+            	Flight flight = new Flight(
+                        rs.getInt("flight_id"),
+                        rs.getString("flight_number"),
+                        rs.getString("departure_city"),
+                        rs.getString("destination_city"),
+                        rs.getTimestamp("departure_time").toLocalDateTime(),
+                        rs.getTimestamp("arrival_time").toLocalDateTime(),
+                        rs.getDouble("price"),
+                        rs.getInt("seats_available")
+                    );
+                    flights.add(flight);
+            	//flights.add(mapResultSetToFlight(rs)); // Helper function
+            }
+        }
+        return flights;
+    }
+
+    // Gets flights with shortest travel time between two cities
+    public Flight getShortestTravelTimeFlight(String departureCity, String destinationCity) {
+        Flight shortestFlight = null;
+        String SQL = "SELECT *, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) AS travel_duration " +
+                     "FROM flights " +
+                     "WHERE departure_city = ? AND destination_city = ? " +
+                     "ORDER BY travel_duration ASC " +
+                     "LIMIT 10";
+        Connection conn = getConn();
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            
+            pstmt.setString(1, departureCity);
+            pstmt.setString(2, destinationCity);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                shortestFlight = mapResultSetToFlight(rs); // helper function
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching the shortest travel time flight: " + e.getMessage());
+        }
+        return shortestFlight;
+    }
 
     // Helper function intended to convert a ResultSet row into a Flight object
     private Flight mapResultSetToFlight(ResultSet rs) throws SQLException {
@@ -505,8 +593,8 @@ public class DB implements DBInterface {
         String flightNumber = rs.getString("flight_number");
         String departureCity = rs.getString("departure_city");
         String destinationCity = rs.getString("destination_city");
-        String departureTime = rs.getString("departure_time");
-        String arrivalTime = rs.getString("arrival_time");
+        LocalDateTime departureTime = rs.getTimestamp("departure_time").toLocalDateTime();
+        LocalDateTime arrivalTime = rs.getTimestamp("arrival_time").toLocalDateTime();
         double price = rs.getDouble("price");
         int seatsAvailable = rs.getInt("seats_available");
         
