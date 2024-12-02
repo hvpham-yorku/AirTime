@@ -565,7 +565,7 @@ public class DB implements DBInterface {
     }
 
     // Gets flights with shortest travel time between two cities
-    public ArrayList<Flight> getShortestTravelTimeFlight(String departureCity, String destinationCity) {
+    public ArrayList<Flight> getShortestTravelTimeFlights(String departureCity, String destinationCity) {
     	ArrayList<Flight> shortestFlights = new ArrayList<>();
         String SQL = "SELECT *, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) AS travel_duration " +
                      "FROM flights " +
