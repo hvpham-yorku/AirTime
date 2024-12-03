@@ -56,6 +56,10 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	    private JButton searchShortestTravelTimeButton = new JButton("Shortest Travel Time");
 	    private JButton searchTravelTimeButton = new JButton("Search Travel Time by cities");
 	    private JButton searchByDateButton = new JButton("Search by Dates");
+		private JButton addToCartButton = new JButton("Add to Cart");
+		private JButton viewCartButton = new JButton("View Cart");
+		private JButton clearCartButton = new JButton("Clear Cart");
+		
 
 		JPanel buttons = new JPanel();
 		JPanel title = new JPanel();
@@ -71,8 +75,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		private JScrollPane transTableScrollPane;
 		private JTable historyTable;
 		private JScrollPane historyTableScrollPane;
-
-		
+		private JTable cartTable;
+		private JScrollPane cartScrollPane;
 		
 		public CustomerDashBoardPage(Controller controller) {
 			setBackground(new Color(255, 255, 255));
@@ -205,6 +209,29 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			 historyTableScrollPane = new JScrollPane(historyTable);
 			 historyTableScrollPane.setVisible(false);
 			 add(historyTableScrollPane, BorderLayout.CENTER);
+
+			 JPanel buttonPanel = new JPanel();
+			 buttonPanel.setLayout(new FlowLayout());
+		 
+			 // Add "Add to Cart" Button
+			 addToCartButton.addActionListener(e -> addToCart());
+			 buttonPanel.add(addToCartButton);
+		 
+			 // Add "View Cart" Button
+			 viewCartButton.addActionListener(e -> viewCart());
+			 buttonPanel.add(viewCartButton);
+		 
+			 // Add "Clear Cart" Button
+			 clearCartButton.addActionListener(e -> clearCart());
+			 buttonPanel.add(clearCartButton);
+		 
+			 // Add Cart Table
+			 cartTable = new JTable();
+			 cartScrollPane = new JScrollPane(cartTable);
+			 cartScrollPane.setVisible(false); // Initially hidden
+			 add(cartScrollPane, BorderLayout.CENTER);
+		 
+			 add(buttonPanel, BorderLayout.NORTH);
 
 	     }
 
@@ -522,6 +549,61 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        repaint();
 
 
+		}
+
+		private void addToCart() {
+			String flightIDInput = JOptionPane.showInputDialog(this, "Enter the Flight ID to add to your cart:");
+			if (flightIDInput == null || flightIDInput.isEmpty()) return;
+		
+			try {
+				int flightID = Integer.parseInt(flightIDInput);
+				Flight flight = controller.getDatabase().getFlight(flightID); // Fetch flight from DB
+		
+				if (flight != null) {
+					controller.getCurrentUser().addToCart(flight); // Add to user's cart
+					JOptionPane.showMessageDialog(this, "Flight added to cart successfully!");
+				} else {
+					JOptionPane.showMessageDialog(this, "Flight not found.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "Invalid Flight ID format.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		private void viewCart() {
+			ArrayList<Flight> cart = controller.getCurrentUser().getCart();
+		
+			if (cart.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Your cart is empty.", "Info", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+		
+			String[] columnNames = {"Flight ID", "Flight Number", "Departure City", "Destination City", 
+									 "Departure Time", "Arrival Time", "Price", "Seats Available"};
+			Object[][] tableData = new Object[cart.size()][columnNames.length];
+		
+			for (int i = 0; i < cart.size(); i++) {
+				Flight flight = cart.get(i);
+				tableData[i][0] = flight.getFlightID();
+				tableData[i][1] = flight.getFlightNumber();
+				tableData[i][2] = flight.getDepartureCity();
+				tableData[i][3] = flight.getDestinationCity();
+				tableData[i][4] = flight.getDepartureTime();
+				tableData[i][5] = flight.getArrivalTime();
+				tableData[i][6] = flight.getPrice();
+				tableData[i][7] = flight.getSeatsAvailable();
+			}
+		
+			cartTable.setModel(new DefaultTableModel(tableData, columnNames));
+			cartScrollPane.setVisible(true);
+			revalidate();
+			repaint();
+		}
+		
+		private void clearCart() {
+			controller.getCurrentUser().clearCart();
+			JOptionPane.showMessageDialog(this, "Cart cleared successfully.");
+			cartScrollPane.setVisible(false);
 		}
 
 
