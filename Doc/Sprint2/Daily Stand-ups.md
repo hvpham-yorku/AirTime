@@ -76,7 +76,7 @@ What did you work on since the last standup?
   - Added getFlightsByDateRange to retrieve flights based on date filtering.
   - Enhanced queries for travel duration using TIMESTAMPDIFF.
 - Dependencies:
-  - Added JCalendar and moved MySQL Connector JARs to the dependencies folder.
+  - Added JCalendar JAR and moved MySQL Connector JAR to the dependencies folder.
 
 What do you commit to next?
   - Perform end-to-end testing of all filtering features.
