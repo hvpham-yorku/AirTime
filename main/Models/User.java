@@ -13,6 +13,7 @@ public class User {
     private String password;
     private String role; // "admin" or "customer"
     private ArrayList<Transaction> transactions;
+    private ArrayList<Flight> flights;
 
     // Constructor to initialize User object
     public User(int userID, String username, String password, String role) {
@@ -56,6 +57,22 @@ public class User {
     }
     public ArrayList<Transaction> getTransactions(){
         return transactions;
+    }
+
+    public ArrayList<Transaction> getTransactions(){
+        return transactions;
+    }
+
+    public void setTransactions(ArrayList<Transaction> transactions){
+        this.transactions = transactions;
+    }
+
+    public void setFlights(ArrayList<Flight> flights){
+        this.flights = flights;
+    }
+
+    public ArrayList<Flight> getFlights(){
+        return flights;
     }
 
     @Override

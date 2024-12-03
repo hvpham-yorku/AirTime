@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,8 @@ import com.toedter.calendar.JDateChooser;
 import main.Controller.Controller;
 import main.DB.DB;
 import main.Models.Flight;
+import main.Models.Transaction;
+import main.Models.User;
 
 /**
  * @author henap
@@ -64,6 +67,11 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 	    private JTable flightTable;
 	    private JScrollPane tableScrollPane;
+		private JTable transactionTable;
+		private JScrollPane transTableScrollPane;
+		private JTable historyTable;
+		private JScrollPane historyTableScrollPane;
+
 		
 		
 		public CustomerDashBoardPage(Controller controller) {
@@ -163,6 +171,41 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	        tableScrollPane = new JScrollPane(flightTable);
 	        tableScrollPane.setVisible(false);
 	        add(tableScrollPane, BorderLayout.CENTER);
+
+			
+			//Creating buttons to check transaction and history for user
+			JButton transactionHistoryButton = new JButton("Transaction History");
+			JButton flightHistoryButton = new JButton("Flight History");
+
+			 // Configure Transaction History Button
+			 transactionHistoryButton.setForeground(Color.WHITE);
+			 transactionHistoryButton.setBackground(Color.BLACK);
+			 transactionHistoryButton.addActionListener(e -> transactionHistoryCheck());
+			 buttonPanel.add(transactionHistoryButton);
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+	 
+			 // Configure Flight History Button
+			 flightHistoryButton.setForeground(Color.WHITE);
+			 flightHistoryButton.setBackground(Color.BLACK);
+			 flightHistoryButton.addActionListener(e -> flightHistoryCheck());
+			 buttonPanel.add(flightHistoryButton);
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+	 
+			 setLayout(new BorderLayout());
+			 add(title, BorderLayout.NORTH);
+			 add(buttonPanel, BorderLayout.WEST);
+			 add(bottomPanel, BorderLayout.SOUTH);
+	 
+			 transactionTable = new JTable();
+			 transTableScrollPane = new JScrollPane(transactionTable);
+			 transTableScrollPane.setVisible(false);
+			 add(transTableScrollPane, BorderLayout.CENTER);
+	 
+			 historyTable = new JTable();
+			 historyTableScrollPane = new JScrollPane(historyTable);
+			 historyTableScrollPane.setVisible(false);
+			 add(historyTableScrollPane, BorderLayout.CENTER);
+
 	     }
 
 	     private void toggleBrowseFlights() {
@@ -409,6 +452,78 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	            JOptionPane.showMessageDialog(this, "No flights found for the given dates.", "Info", JOptionPane.INFORMATION_MESSAGE);
 	        }
 	    }
+
+		private void transactionHistoryCheck(){
+
+			User user = controller.getCurrentUser();
+
+			ArrayList<Transaction> transactions = user.getTransactions();
+			
+			if (transactions.isEmpty()){
+
+				JOptionPane.showMessageDialog(this, "Your transaction history is empty.", "Info", JOptionPane.INFORMATION_MESSAGE);
+
+			}
+
+			String[] columns = {"Transaction ID", "Booking ID", "Transaction Date", "Price"};
+			Object[][] table = new Object[transactions.size()][columns.length];
+
+			for (int i = 0; i < transactions.size(); i++){
+
+				table[i][0] = transactions.get(i).getTransactionID();
+				table[i][1] = transactions.get(i).getBookingID();
+				table[i][2] = transactions.get(i).getTransactionDate();
+				table[i][3] = transactions.get(i).getAmount();
+			}
+
+			transactionTable.setModel(new DefaultTableModel(table, columns));
+	        transTableScrollPane.setVisible(true);
+	        revalidate();
+	        repaint();
+		}
+
+		private void flightHistoryCheck(){
+
+			User user = controller.getCurrentUser();
+
+			LocalDateTime now = LocalDateTime.now();
+
+			ArrayList<Flight> flights = user.getFlights();
+
+			ArrayList<Flight> pastFlights = new ArrayList<Flight>();
+
+			if (flights.isEmpty()){
+				JOptionPane.showMessageDialog(this, "Your flight history is empty.", "Info", JOptionPane.INFORMATION_MESSAGE);
+			}
+
+			for (int i = 0; i<flights.size(); i++){
+				if (flights.get(i).getDepartureTime().isBefore(now)){
+					pastFlights.add(flights.get(i));
+				}
+			}
+			
+			String[] columns = {"Flight ID", "Flight Number", "Departure City", "Destination City", "Departure Time", "Arrival Time", "Price"};
+			Object[][] table = new Object[pastFlights.size()][columns.length];
+
+			for (int i = 0; i < pastFlights.size(); i++){
+
+				table[i][0] = pastFlights.get(i).getFlightID();
+				table[i][1] = pastFlights.get(i).getFlightNumber();
+				table[i][2] = pastFlights.get(i).getDepartureCity();
+				table[i][3] = pastFlights.get(i).getDestinationCity();
+				table[i][4] = pastFlights.get(i).getDepartureTime();
+				table[i][5] = pastFlights.get(i).getArrivalTime();
+				table[i][6] = pastFlights.get(i).getPrice();
+			}
+
+			historyTable.setModel(new DefaultTableModel(table, columns));
+	        historyTableScrollPane.setVisible(true);
+	        revalidate();
+	        repaint();
+
+
+		}
+
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
