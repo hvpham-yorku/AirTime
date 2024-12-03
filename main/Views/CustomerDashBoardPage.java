@@ -59,6 +59,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		private JButton addToCartButton = new JButton("Add to Cart");
 		private JButton viewCartButton = new JButton("View Cart");
 		private JButton clearCartButton = new JButton("Clear Cart");
+		private JButton payButton = new JButton("Pay for Flights");
 		
 
 		JPanel buttons = new JPanel();
@@ -232,6 +233,13 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			 add(cartScrollPane, BorderLayout.CENTER);
 		 
 			 add(buttonPanel, BorderLayout.NORTH);
+
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			 buttonPanel.add(payButton);
+
+			 payButton.setForeground(Color.WHITE);
+			 payButton.setBackground(Color.BLACK);
+			 payButton.addActionListener(e -> processPayment());
 
 	     }
 
@@ -604,6 +612,53 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			controller.getCurrentUser().clearCart();
 			JOptionPane.showMessageDialog(this, "Cart cleared successfully.");
 			cartScrollPane.setVisible(false);
+		}
+
+		private void processPayment() {
+			User currentUser = controller.getCurrentUser();
+			ArrayList<Flight> cart = currentUser.getCart();
+		
+			if (cart.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Your cart is empty. Add flights to your cart before paying.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		
+			// Mock payment process
+			String paymentDetails = JOptionPane.showInputDialog(this, "Enter Payment Details:");
+			if (paymentDetails == null || paymentDetails.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Payment details are required.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		
+			// Iterate over the cart and create bookings
+			boolean allBookingsSuccessful = true;
+			for (Flight flight : cart) {
+				int userId = currentUser.getUserID();
+				int flightId = flight.getFlightID();
+				double price = flight.getPrice();
+				String seatNumber = JOptionPane.showInputDialog(this, "Enter Seat Number for flight " + flight.getFlightNumber() + ":");
+		
+				if (seatNumber == null || seatNumber.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Seat number is required for flight " + flight.getFlightNumber() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+					allBookingsSuccessful = false;
+					continue;
+				}
+		
+				boolean travelInsurance = JOptionPane.showConfirmDialog(this, "Add travel insurance for flight " + flight.getFlightNumber() + "?", "Travel Insurance", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		
+				// Create booking in the database
+				boolean success = controller.getDatabase().createBooking(userId, flightId, price, seatNumber, travelInsurance);
+				if (!success) {
+					allBookingsSuccessful = false;
+				}
+			}
+		
+			if (allBookingsSuccessful) {
+				JOptionPane.showMessageDialog(this, "Payment successful, and all flights booked!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				currentUser.clearCart(); // Clear the cart after successful payment
+			} else {
+				JOptionPane.showMessageDialog(this, "Some bookings failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 
