@@ -34,6 +34,7 @@ import com.toedter.calendar.JDateChooser;
 
 import main.Controller.Controller;
 import main.DB.DB;
+import main.Models.Booking;
 import main.Models.Flight;
 import main.Models.Transaction;
 import main.Models.User;
@@ -60,6 +61,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		private JButton viewCartButton = new JButton("View Cart");
 		private JButton clearCartButton = new JButton("Clear Cart");
 		private JButton payButton = new JButton("Pay for Flights");
+		private JButton addTravelInsuranceButton = new JButton("Add Travel Insurance");
 		
 
 		JPanel buttons = new JPanel();
@@ -240,6 +242,13 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			 payButton.setForeground(Color.WHITE);
 			 payButton.setBackground(Color.BLACK);
 			 payButton.addActionListener(e -> processPayment());
+
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			 buttonPanel.add(addTravelInsuranceButton);
+
+			 addTravelInsuranceButton.setForeground(Color.WHITE);
+			 addTravelInsuranceButton.setBackground(Color.BLACK);
+			 addTravelInsuranceButton.addActionListener(e -> addTravelInsurance());
 
 	     }
 
@@ -658,6 +667,46 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 				currentUser.clearCart(); // Clear the cart after successful payment
 			} else {
 				JOptionPane.showMessageDialog(this, "Some bookings failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		private void addTravelInsurance() {
+			// Prompt the user to enter the Booking ID
+			String bookingIDInput = JOptionPane.showInputDialog(this, "Enter the Booking ID to add travel insurance:");
+			if (bookingIDInput == null || bookingIDInput.isEmpty()) return;
+		
+			try {
+				int bookingID = Integer.parseInt(bookingIDInput);
+		
+				// Retrieve the booking from the database
+				Booking booking = controller.getDatabase().getBooking(bookingID);
+				if (booking == null) {
+					JOptionPane.showMessageDialog(this, "Booking not found.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		
+				// Check if travel insurance has already been added
+				if (booking.isTravelInsurance()) { // Ensure travel_insurance field is accessible
+					JOptionPane.showMessageDialog(this, "Travel insurance has already been added for this booking.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		
+				// Update the booking to add travel insurance
+				boolean success = controller.getDatabase().updateBooking(
+					bookingID, 
+					0, 
+					null, 
+					true // Set travelInsurance to true
+				);
+		
+				if (success) {
+					JOptionPane.showMessageDialog(this, "Travel insurance added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this, "Failed to add travel insurance. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+		
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "Invalid Booking ID format.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
