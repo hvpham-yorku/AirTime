@@ -55,6 +55,9 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+    public ArrayList<Transaction> getTransactions(){
+        return transactions;
+    }
 
     public ArrayList<Transaction> getTransactions(){
         return transactions;
