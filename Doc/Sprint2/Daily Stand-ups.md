@@ -3,6 +3,8 @@
 November 27th - Sprint 2 Standup 1
 -
 What did you work on since the last standup?
+
+Task IDs:  **AIR-9** (Any user should be able to search for a specific departing city. An error message will be displayed to the user if the departing city is not in our databases) and **AIR-10** (Any user should be able to search for a specific destination. An error message will be displayed to the user if the destination city is not in our databases)
 - AdminDashBoardPage and CustomerDashBoardPage:
   - Adjusted flightButtonPanel to use vertical BoxLayout and added vertical spacing for buttons.
   - Positioned flightButtonPanel on the left for better UI organization.
@@ -11,7 +13,7 @@ What did you work on since the last standup?
   - Added getFlightsByDepartureCity(String city) and getFlightsByDestinationCity(String city) to fetch flights based on departure or destination cities from the database.
 
 What do you commit to next?
-  - Working on completing Task ID: AIR-11
+  - Working on completing Task ID: *AIR-11*
 
 When do you think you'll be done?
   - The next standup should complete Integration and testing (November 30th).
@@ -22,6 +24,8 @@ Do you have any blockers?
 November 29th - Sprint 2 Standup 2
 -
 What did you work on since the last standup?
+
+Task ID: **AIR-11** (Any user should be able to filter with minimum and maximum prices. An error message will be displayed if the user inputs a minimum price of less than 0$)
 - CustomerDashBoardPage and AdminDashBoardPage:
   - Implemented filtering flights by minimum and maximum prices.
   - Added error handling for minimum prices below $0.
@@ -31,7 +35,7 @@ What did you work on since the last standup?
   - Implemented getFlightsByPriceRange to retrieve flights within a specified price range.
 
 What do you commit to next?
-  - Task ID: AIR-12
+  - Task ID: *AIR-12*
   - Enhance the DB.java class with filtering for shortest travel time.
   - Update dashboards to handle user inputs for filtering by travel time and cities.
   - Improve flight creation and update queries with error handling
@@ -45,6 +49,8 @@ Do you have any blockers?
 November 30th - Sprint 2 Standup 3
 -
 What did you work on since the last standup?
+
+Task ID: **AIR-12** (Any user should be able to filter to search for shortest travel time or to omit connecting flights)
 - DB.java:
   - Implemented filtering by price range and shortest travel time.
   - Added methods to retrieve flights based on departure and destination cities.
@@ -53,7 +59,7 @@ What did you work on since the last standup?
   - Handled user inputs for filtering by travel time and cities through pop-up dialogs.
 
 What do you commit to next?
-  - Task ID: AIR-13
+  - Task ID: *AIR-13*
   - Implement date filtering in both dashboards.
   - Integrate JDateChooser for user-friendly date selection.
   - Add error handling for invalid date inputs.
@@ -67,6 +73,8 @@ Do you have any blockers?
 December 1st - Sprint 2 Standup 4
 -
 What did you work on since the last standup?
+
+Task ID: **AIR-13** (Any user should be able to filter the search by departing date or arrival date. An error will be displayed to the user if the departing date has already passed or if the arrival date is before the departing date)
 - CustomerDashBoardPage and AdminDashBoardPage:
   - Implemented filtering by departure and arrival dates.
   - Integrated JDateChooser for date selection.
@@ -81,6 +89,7 @@ What did you work on since the last standup?
 What do you commit to next?
   - Perform end-to-end testing of all filtering features.
   - Completed remaining documentation (JIRA related)
+  - Update system design documentation
 
 When do you think you'll be done?
   - All testing will be completed by December 2nd.
