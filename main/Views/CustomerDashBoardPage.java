@@ -280,7 +280,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	private void toggleBrowseFlights() {
 		if (!tableScrollPane.isVisible()) {
 			loadFlightData(); // Load flight data from the database
-			tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
+			// tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 			// tableScrollPane.setVisible(true);
 		} else {
 			// tableScrollPane.setVisible(false);
@@ -325,7 +325,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			cartScrollPane.setVisible(false);
 			tableScrollPane.setVisible(true);
 			CardLayout cl = (CardLayout) centerPanel.getLayout();
-			cl.show(centerPanel, "Browse"); // Show the Cart table
+			cl.show(centerPanel, "Browse"); // Show the Browse table
 			// tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 			revalidate();
 			repaint();
@@ -396,7 +396,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		cartScrollPane.setVisible(false);
 		tableScrollPane.setVisible(true);
 		CardLayout cl = (CardLayout) centerPanel.getLayout();
-		cl.show(centerPanel, "Browse"); // Show the table
+		cl.show(centerPanel, "Browse"); // Show the Browse table
 		// tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 		revalidate();
 		repaint();
@@ -589,7 +589,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		cartScrollPane.setVisible(false);
 		transTableScrollPane.setVisible(true);
 		CardLayout cl = (CardLayout) centerPanel.getLayout();
-		cl.show(centerPanel, "Transcations"); // Show the Cart table
+		cl.show(centerPanel, "Transactions"); // Show the Transactions table
 		// tabbedPane.setSelectedIndex(1); // Switch to the "Transactions" tab
 		revalidate();
 		repaint();
@@ -637,7 +637,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		cartScrollPane.setVisible(false);
 		historyTableScrollPane.setVisible(true);
 		CardLayout cl = (CardLayout) centerPanel.getLayout();
-		cl.show(centerPanel, "History"); // Show the Cart table
+		cl.show(centerPanel, "History"); // Show the History table
 		// tabbedPane.setSelectedIndex(2); // Switch to the "History" tab
 		revalidate();
 		repaint();
