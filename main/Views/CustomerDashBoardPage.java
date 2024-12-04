@@ -225,9 +225,6 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			// Add the button to the button panel
 			buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 			buttonPanel.add(cancelFlightButton);
-
-			 JPanel buttonPanel = new JPanel();
-			 buttonPanel.setLayout(new FlowLayout());
 		 
 			 // Add "Add to Cart" Button
 			 addToCartButton.addActionListener(e -> addToCart());
