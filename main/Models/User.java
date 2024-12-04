@@ -1,5 +1,7 @@
 package main.Models;
 
+import java.util.ArrayList;
+
 /**
  * @author henap
  *
@@ -10,6 +12,11 @@ public class User {
     private String username;
     private String password;
     private String role; // "admin" or "customer"
+    private ArrayList<Transaction> transactions;
+    private ArrayList<Flight> flights;
+    private ArrayList<Flight> cart; // Cart for storing selected flights before payment
+    private double accountBalance;
+    private ArrayList<Booking> bookings;
 
     // Constructor to initialize User object
     public User(int userID, String username, String password, String role) {
@@ -17,6 +24,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role != null ? role : "customer"; // Default to "customer" if role is null
+        this.cart = new ArrayList<>(); // Initialize the cart
     }
 
     // Getter and Setter methods
@@ -50,6 +58,56 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    public ArrayList<Transaction> getTransactions(){
+        return transactions;
+    }
+
+
+    public void setTransactions(ArrayList<Transaction> transactions){
+        this.transactions = transactions;
+    }
+
+    public void setFlights(ArrayList<Flight> flights){
+        this.flights = flights;
+    }
+
+    public ArrayList<Flight> getFlights(){
+        return flights;
+    }
+    
+    public void addToCart(Flight flight) {
+        if (flight != null) {
+            cart.add(flight);
+        }
+    }
+
+    public void removeFromCart(Flight flight) {
+        cart.remove(flight);
+    }
+
+    public ArrayList<Flight> getCart() {
+        return cart;
+    }
+
+    public void clearCart() {
+        cart.clear();
+    }
+
+    public void setAccountBalance(double accountBalance){
+        this.accountBalance = accountBalance;
+    }
+
+    public double getAccountBalance(){
+        return accountBalance;
+    }
+
+    public void setBookings(ArrayList<Booking> bookings){
+        this.bookings = bookings;
+    }
+
+    public ArrayList<Booking> getBookings(){
+        return bookings;
     }
 
     @Override
