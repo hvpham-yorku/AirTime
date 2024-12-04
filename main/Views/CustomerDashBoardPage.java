@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -79,6 +80,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	private JScrollPane historyTableScrollPane;
 	private JTable cartTable;
 	private JScrollPane cartScrollPane;
+	private JTabbedPane tabbedPane;
 
 	public CustomerDashBoardPage(Controller controller) {
 		setBackground(new Color(255, 255, 255));
@@ -123,7 +125,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		// Add other buttons to the panel
 		browseFlightsButton.setForeground(Color.WHITE);
 		browseFlightsButton.setBackground(Color.BLACK);
-		browseFlightsButton.addActionListener(e -> toggleBrowseFlights());
+		browseFlightsButton.addActionListener(e -> loadFlightData());// toggleBrowseFlights());
 		buttonPanel.add(browseFlightsButton);
 		buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 
@@ -175,8 +177,16 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 		flightTable = new JTable();
 		tableScrollPane = new JScrollPane(flightTable);
-		tableScrollPane.setVisible(false);
-		add(tableScrollPane, BorderLayout.CENTER);
+		// tableScrollPane.setVisible(false);
+		// add(tableScrollPane, BorderLayout.CENTER);
+
+		tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Browse", tableScrollPane);
+		tabbedPane.addTab("Transactions", transTableScrollPane);
+		tabbedPane.addTab("History", historyTableScrollPane);
+		tabbedPane.addTab("Cart", cartScrollPane);
+
+		add(tabbedPane, BorderLayout.CENTER);
 
 		// Configure Transaction History Button
 		transactionHistoryButton.setForeground(Color.WHITE);
@@ -194,12 +204,12 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 		transactionTable = new JTable();
 		transTableScrollPane = new JScrollPane(transactionTable);
-		transTableScrollPane.setVisible(false);
+		// transTableScrollPane.setVisible(false);
 		// add(transTableScrollPane, BorderLayout.CENTER);
 
 		historyTable = new JTable();
 		historyTableScrollPane = new JScrollPane(historyTable);
-		historyTableScrollPane.setVisible(false);
+		// historyTableScrollPane.setVisible(false);
 		// add(historyTableScrollPane, BorderLayout.CENTER);
 
 		// Create the Cancel Flight button
@@ -238,7 +248,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		// Add Cart Table
 		cartTable = new JTable();
 		cartScrollPane = new JScrollPane(cartTable);
-		cartScrollPane.setVisible(false); // Initially hidden
+		// cartScrollPane.setVisible(false); // Initially hidden
 		// add(cartScrollPane, BorderLayout.CENTER);
 
 		buttonPanel.add(payButton);
@@ -260,9 +270,10 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	private void toggleBrowseFlights() {
 		if (!tableScrollPane.isVisible()) {
 			loadFlightData(); // Load flight data from the database
-			tableScrollPane.setVisible(true);
+			tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
+			// tableScrollPane.setVisible(true);
 		} else {
-			tableScrollPane.setVisible(false);
+			// tableScrollPane.setVisible(false);
 		}
 		revalidate();
 		repaint();
@@ -299,6 +310,13 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 			// Set table model
 			flightTable.setModel(new DefaultTableModel(tableData, columnNames));
+			transTableScrollPane.setVisible(false);
+			historyTableScrollPane.setVisible(false);
+			cartScrollPane.setVisible(false);
+			tableScrollPane.setVisible(true);
+			tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
+			revalidate();
+			repaint();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Failed to load flight data: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -361,7 +379,11 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		}
 
 		flightTable.setModel(new DefaultTableModel(tableData, columnNames));
+		transTableScrollPane.setVisible(false);
+		historyTableScrollPane.setVisible(false);
+		cartScrollPane.setVisible(false);
 		tableScrollPane.setVisible(true);
+		tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 		revalidate();
 		repaint();
 	}
@@ -548,7 +570,11 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		}
 
 		transactionTable.setModel(new DefaultTableModel(table, columns));
+		tableScrollPane.setVisible(false);
+		historyTableScrollPane.setVisible(false);
+		cartScrollPane.setVisible(false);
 		transTableScrollPane.setVisible(true);
+		tabbedPane.setSelectedIndex(1); // Switch to the "Transactions" tab
 		revalidate();
 		repaint();
 	}
@@ -590,7 +616,11 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		}
 
 		historyTable.setModel(new DefaultTableModel(table, columns));
+		tableScrollPane.setVisible(false);
+		transTableScrollPane.setVisible(false);
+		cartScrollPane.setVisible(false);
 		historyTableScrollPane.setVisible(true);
+		tabbedPane.setSelectedIndex(2); // Switch to the "History" tab
 		revalidate();
 		repaint();
 
@@ -699,7 +729,12 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		}
 
 		cartTable.setModel(new DefaultTableModel(tableData, columnNames));
+		tableScrollPane.setVisible(false);
+		transTableScrollPane.setVisible(false);
+		historyTableScrollPane.setVisible(false);
+		// Show the Cart content
 		cartScrollPane.setVisible(true);
+		tabbedPane.setSelectedIndex(3); // Switch to the "Cart" tab
 		revalidate();
 		repaint();
 	}
@@ -708,6 +743,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		controller.getCurrentUser().clearCart();
 		JOptionPane.showMessageDialog(this, "Cart cleared successfully.");
 		cartScrollPane.setVisible(false);
+		revalidate();
+		repaint();
+		tabbedPane.setSelectedIndex(3);
 	}
 
 	// Payment user story
