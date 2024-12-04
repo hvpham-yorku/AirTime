@@ -103,6 +103,34 @@ public class Controller {
 	        return true;
 		}
 	}
+
+	public boolean addAdmin(int adminID, String username, String password) {
+		try {
+			return this.mysql_database.createUser(adminID, username, password, "admin") != null;
+		} catch (Exception e) {
+			System.out.println("Error adding admin: " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public boolean removeAdmin(int adminID) {
+		try {
+			User user = this.mysql_database.getUser(adminID);
+			if (user == null) {
+				System.out.println("Error: Admin with ID " + adminID + " does not exist.");
+				return false;
+			}
+			if (!"admin".equalsIgnoreCase(user.getRole())) {
+				System.out.println("Error: User with ID " + adminID + " is not an admin.");
+				return false;
+			}
+			return this.mysql_database.deleteUser(adminID);
+		} catch (Exception e) {
+			System.out.println("Error removing admin: " + e.getMessage());
+			return false;
+		}
+	}
+	
 	
 	public User getCurrentUser() {
 		return this.currentUser;

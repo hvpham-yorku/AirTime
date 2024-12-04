@@ -44,6 +44,9 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
     private JButton searchShortestTravelTimeButton = new JButton("Shortest Travel Time");
     private JButton searchTravelTimeButton = new JButton("Search Travel Time by cities");
     private JButton searchByDateButton = new JButton("Search by Dates");
+
+    private JButton addAdminButton = new JButton("Add Admin");
+    private JButton removeAdminButton = new JButton("Remove Admin");
     
 	JPanel buttons = new JPanel();
 	JPanel title = new JPanel();
@@ -174,6 +177,18 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         tableScrollPane = new JScrollPane(flightTable);
         tableScrollPane.setVisible(false); // Initially hidden
         this.add(tableScrollPane, BorderLayout.CENTER);
+
+        addAdminButton.setForeground(Color.WHITE);
+        addAdminButton.setBackground(Color.BLACK);
+        addAdminButton.addActionListener(e -> addAdmin());
+
+        removeAdminButton.setForeground(Color.WHITE);
+        removeAdminButton.setBackground(Color.BLACK);
+        removeAdminButton.addActionListener(e -> removeAdmin());
+
+        flightButtonPanel.add(addAdminButton);
+        flightButtonPanel.add(Box.createVerticalStrut(10));
+        flightButtonPanel.add(removeAdminButton);
 
      }
 
@@ -599,6 +614,51 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
             JOptionPane.showMessageDialog(this, "Flights filtered by date.", "Info", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "No flights found for the given dates.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void addAdmin() {
+        try {
+            String adminIDInput = JOptionPane.showInputDialog(this, "Enter Admin ID:");
+            String username = JOptionPane.showInputDialog(this, "Enter Admin Username:");
+            String password = JOptionPane.showInputDialog(this, "Enter Admin Password:");
+    
+            if (adminIDInput == null || username == null || password == null ||
+                adminIDInput.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            int adminID = Integer.parseInt(adminIDInput);
+    
+            if (controller.addAdmin(adminID, username, password)) {
+                JOptionPane.showMessageDialog(this, "Admin added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to add admin.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid Admin ID format.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void removeAdmin() {
+        try {
+            String adminIDInput = JOptionPane.showInputDialog(this, "Enter Admin ID to Remove:");
+    
+            if (adminIDInput == null || adminIDInput.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Admin ID is required!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            int adminID = Integer.parseInt(adminIDInput);
+    
+            if (controller.removeAdmin(adminID)) {
+                JOptionPane.showMessageDialog(this, "Admin removed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to remove admin.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid Admin ID format.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
