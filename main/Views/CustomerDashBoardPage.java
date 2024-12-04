@@ -632,14 +632,14 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			}
 			JOptionPane.showMessageDialog(this, "The flight has been cancelled", "Info", JOptionPane.INFORMATION_MESSAGE);
     	}
-
+		
 		private void addToCart() {
 			String flightIDInput = JOptionPane.showInputDialog(this, "Enter the Flight ID to add to your cart:");
 			if (flightIDInput == null || flightIDInput.isEmpty()) return;
 		
 			try {
 				int flightID = Integer.parseInt(flightIDInput);
-				Flight flight = controller.getDatabase().getFlight(flightID); // Fetch flight from DB
+				Flight flight = controller.getDatabase().getFlight(flightID); // Fetches data
 		
 				if (flight != null) {
 					controller.getCurrentUser().addToCart(flight); // Add to user's cart
