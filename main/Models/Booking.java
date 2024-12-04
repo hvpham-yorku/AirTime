@@ -11,6 +11,7 @@ public class Booking {
     private int flightID;
     private String bookingDate;
     private int seatsBooked;
+    private boolean travelInsurance;
 
     public Booking(int bookingID, int userID, int flightID, String bookingDate, int seatsBooked) {
         this.bookingID = bookingID;
@@ -60,6 +61,14 @@ public class Booking {
 
     public void setSeatsBooked(int seatsBooked) {
         this.seatsBooked = seatsBooked;
+    }
+
+    public boolean isTravelInsurance() {
+        return travelInsurance;
+    }
+
+    public void setTravelInsurance(boolean travelInsurance) {
+        this.travelInsurance = travelInsurance;
     }
 
     

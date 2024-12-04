@@ -34,6 +34,7 @@ import com.toedter.calendar.JDateChooser;
 
 import main.Controller.Controller;
 import main.DB.DB;
+import main.Models.Booking;
 import main.Models.Flight;
 import main.Models.Transaction;
 import main.Models.User;
@@ -56,6 +57,12 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	    private JButton searchShortestTravelTimeButton = new JButton("Shortest Travel Time");
 	    private JButton searchTravelTimeButton = new JButton("Search Travel Time by cities");
 	    private JButton searchByDateButton = new JButton("Search by Dates");
+		private JButton addToCartButton = new JButton("Add to Cart");
+		private JButton viewCartButton = new JButton("View Cart");
+		private JButton clearCartButton = new JButton("Clear Cart");
+		private JButton payButton = new JButton("Pay for Flights");
+		private JButton addTravelInsuranceButton = new JButton("Add Travel Insurance");
+		
 
 		JPanel buttons = new JPanel();
 		JPanel title = new JPanel();
@@ -71,8 +78,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		private JScrollPane transTableScrollPane;
 		private JTable historyTable;
 		private JScrollPane historyTableScrollPane;
-
-		
+		private JTable cartTable;
+		private JScrollPane cartScrollPane;
 		
 		public CustomerDashBoardPage(Controller controller) {
 			setBackground(new Color(255, 255, 255));
@@ -218,6 +225,43 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			// Add the button to the button panel
 			buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
 			buttonPanel.add(cancelFlightButton);
+
+			 JPanel buttonPanel = new JPanel();
+			 buttonPanel.setLayout(new FlowLayout());
+		 
+			 // Add "Add to Cart" Button
+			 addToCartButton.addActionListener(e -> addToCart());
+			 buttonPanel.add(addToCartButton);
+		 
+			 // Add "View Cart" Button
+			 viewCartButton.addActionListener(e -> viewCart());
+			 buttonPanel.add(viewCartButton);
+		 
+			 // Add "Clear Cart" Button
+			 clearCartButton.addActionListener(e -> clearCart());
+			 buttonPanel.add(clearCartButton);
+		 
+			 // Add Cart Table
+			 cartTable = new JTable();
+			 cartScrollPane = new JScrollPane(cartTable);
+			 cartScrollPane.setVisible(false); // Initially hidden
+			 add(cartScrollPane, BorderLayout.CENTER);
+		 
+			 add(buttonPanel, BorderLayout.NORTH);
+
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			 buttonPanel.add(payButton);
+
+			 payButton.setForeground(Color.WHITE);
+			 payButton.setBackground(Color.BLACK);
+			 payButton.addActionListener(e -> processPayment());
+
+			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			 buttonPanel.add(addTravelInsuranceButton);
+
+			 addTravelInsuranceButton.setForeground(Color.WHITE);
+			 addTravelInsuranceButton.setBackground(Color.BLACK);
+			 addTravelInsuranceButton.addActionListener(e -> addTravelInsurance());
 
 	     }
 
@@ -536,8 +580,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 
 		}
-
-		private void cancelFlight(){
+    private void cancelFlight(){
 
 			User user = controller.getCurrentUser();
 			LocalDateTime now = LocalDateTime.now();
@@ -573,6 +616,148 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(this, "The flight you are trying to cancel does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			JOptionPane.showMessageDialog(this, "The flight has been cancelled", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+		private void addToCart() {
+			String flightIDInput = JOptionPane.showInputDialog(this, "Enter the Flight ID to add to your cart:");
+			if (flightIDInput == null || flightIDInput.isEmpty()) return;
+		
+			try {
+				int flightID = Integer.parseInt(flightIDInput);
+				Flight flight = controller.getDatabase().getFlight(flightID); // Fetch flight from DB
+		
+				if (flight != null) {
+					controller.getCurrentUser().addToCart(flight); // Add to user's cart
+					JOptionPane.showMessageDialog(this, "Flight added to cart successfully!");
+				} else {
+					JOptionPane.showMessageDialog(this, "Flight not found.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "Invalid Flight ID format.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		private void viewCart() {
+			ArrayList<Flight> cart = controller.getCurrentUser().getCart();
+		
+			if (cart.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Your cart is empty.", "Info", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+		
+			String[] columnNames = {"Flight ID", "Flight Number", "Departure City", "Destination City", 
+									 "Departure Time", "Arrival Time", "Price", "Seats Available"};
+			Object[][] tableData = new Object[cart.size()][columnNames.length];
+		
+			for (int i = 0; i < cart.size(); i++) {
+				Flight flight = cart.get(i);
+				tableData[i][0] = flight.getFlightID();
+				tableData[i][1] = flight.getFlightNumber();
+				tableData[i][2] = flight.getDepartureCity();
+				tableData[i][3] = flight.getDestinationCity();
+				tableData[i][4] = flight.getDepartureTime();
+				tableData[i][5] = flight.getArrivalTime();
+				tableData[i][6] = flight.getPrice();
+				tableData[i][7] = flight.getSeatsAvailable();
+			}
+		
+			cartTable.setModel(new DefaultTableModel(tableData, columnNames));
+			cartScrollPane.setVisible(true);
+			revalidate();
+			repaint();
+		}
+		
+		private void clearCart() {
+			controller.getCurrentUser().clearCart();
+			JOptionPane.showMessageDialog(this, "Cart cleared successfully.");
+			cartScrollPane.setVisible(false);
+		}
+
+		private void processPayment() {
+			User currentUser = controller.getCurrentUser();
+			ArrayList<Flight> cart = currentUser.getCart();
+		
+			if (cart.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Your cart is empty. Add flights to your cart before paying.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		
+			// Mock payment process
+			String paymentDetails = JOptionPane.showInputDialog(this, "Enter Payment Details:");
+			if (paymentDetails == null || paymentDetails.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Payment details are required.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		
+			// Iterate over the cart and create bookings
+			boolean allBookingsSuccessful = true;
+			for (Flight flight : cart) {
+				int userId = currentUser.getUserID();
+				int flightId = flight.getFlightID();
+				double price = flight.getPrice();
+				String seatNumber = JOptionPane.showInputDialog(this, "Enter Seat Number for flight " + flight.getFlightNumber() + ":");
+		
+				if (seatNumber == null || seatNumber.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Seat number is required for flight " + flight.getFlightNumber() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+					allBookingsSuccessful = false;
+					continue;
+				}
+		
+				boolean travelInsurance = JOptionPane.showConfirmDialog(this, "Add travel insurance for flight " + flight.getFlightNumber() + "?", "Travel Insurance", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		
+				// Create booking in the database
+				boolean success = controller.getDatabase().createBooking(userId, flightId, price, seatNumber, travelInsurance);
+				if (!success) {
+					allBookingsSuccessful = false;
+				}
+			}
+		
+			if (allBookingsSuccessful) {
+				JOptionPane.showMessageDialog(this, "Payment successful, and all flights booked!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				currentUser.clearCart(); // Clear the cart after successful payment
+			} else {
+				JOptionPane.showMessageDialog(this, "Some bookings failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		private void addTravelInsurance() {
+			// Prompt the user to enter the Booking ID
+			String bookingIDInput = JOptionPane.showInputDialog(this, "Enter the Booking ID to add travel insurance:");
+			if (bookingIDInput == null || bookingIDInput.isEmpty()) return;
+		
+			try {
+				int bookingID = Integer.parseInt(bookingIDInput);
+		
+				// Retrieve the booking from the database
+				Booking booking = controller.getDatabase().getBooking(bookingID);
+				if (booking == null) {
+					JOptionPane.showMessageDialog(this, "Booking not found.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		
+				// Check if travel insurance has already been added
+				if (booking.isTravelInsurance()) { // Ensure travel_insurance field is accessible
+					JOptionPane.showMessageDialog(this, "Travel insurance has already been added for this booking.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		
+				// Update the booking to add travel insurance
+				boolean success = controller.getDatabase().updateBooking(
+					bookingID, 
+					0, 
+					null, 
+					true // Set travelInsurance to true
+				);
+		
+				if (success) {
+					JOptionPane.showMessageDialog(this, "Travel insurance added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this, "Failed to add travel insurance. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+		
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "Invalid Booking ID format.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 
