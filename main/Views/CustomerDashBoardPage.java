@@ -710,7 +710,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		cartScrollPane.setVisible(false);
 	}
 
-	// payment user story
+	// Payment user story
 	private void processPayment() {
 		User currentUser = controller.getCurrentUser();
 		ArrayList<Flight> cart = currentUser.getCart();
@@ -733,6 +733,30 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		for (Flight flight : cart) {
 			int userId = currentUser.getUserID();
 			int flightId = flight.getFlightID();
+			LocalDateTime bookingDate = LocalDateTime.now(); // Set to current date and time
+
+			// Prompt the user for the Booking ID
+			String bookingIdInput = JOptionPane.showInputDialog(this,
+					"Enter Booking ID for flight " + flight.getFlightNumber() + ":");
+			if (bookingIdInput == null || bookingIdInput.isEmpty()) {
+				JOptionPane.showMessageDialog(this,
+						"Booking ID is required for flight " + flight.getFlightNumber() + ".", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				allBookingsSuccessful = false;
+				continue;
+			}
+
+			int bookingId;
+			try {
+				bookingId = Integer.parseInt(bookingIdInput);
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this,
+						"Invalid Booking ID format for flight " + flight.getFlightNumber() + ".", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				allBookingsSuccessful = false;
+				continue;
+			}
+
 			double price = flight.getPrice();
 			String seatNumber = JOptionPane.showInputDialog(this,
 					"Enter Seat Number for flight " + flight.getFlightNumber() + ":");
@@ -750,8 +774,8 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 			// Create booking in the database
-			boolean success = controller.getDatabase().createBooking(userId, flightId, price, seatNumber,
-					travelInsurance);
+			boolean success = controller.getDatabase().createBooking(bookingId, userId, flightId, bookingDate, price,
+					seatNumber, travelInsurance);
 			if (!success) {
 				allBookingsSuccessful = false;
 			}
