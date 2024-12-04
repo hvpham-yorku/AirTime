@@ -371,7 +371,8 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
                 boolean result = controller.getDatabase().createFlight(flightID, flightNumber, depString, arrString, updatedDepartureTime, updatedArrivalTime, cost, numSeats);
 
                 if (result){
-                	loadFlightData();
+
+                	  loadFlightData(); // Refresh the flight table
                     JOptionPane.showMessageDialog(this, "Flight has been added.");
                 }
                 else{
@@ -393,7 +394,7 @@ public class AdminDashBoardPage extends JPanel implements ActionListener {
         boolean result = controller.getDatabase().deleteFlight(flightID);
 
         if (result){
-        	loadFlightData();
+            loadFlightData(); // Refresh the flight table
             JOptionPane.showMessageDialog(this, "Flight removed successfully");
         }
         else{
