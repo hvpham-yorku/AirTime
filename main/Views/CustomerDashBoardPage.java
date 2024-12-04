@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -577,12 +578,14 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 
 		}
-    private void cancelFlight(){
+    	private void cancelFlight(){
 
 			User user = controller.getCurrentUser();
 			LocalDateTime now = LocalDateTime.now();
 			ArrayList<Flight> currFlights = new ArrayList<Flight>();
 			ArrayList<Flight> flights = user.getFlights();
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); //pattern for the string parsing
 
 			for (int i = 0; i<flights.size(); i++){
 				if (flights.get(i).getDepartureTime().isAfter(now)){
@@ -603,7 +606,22 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 				if (flight.getFlightID() == flightID){
 
 					exists = true;
-					flights.remove(flight);
+					ArrayList<Booking> bookings = user.getBookings();
+					for (Booking booking : bookings){
+
+						if(booking.getFlightID() == flightID){
+							String booked = booking.getBookingDate();
+							LocalDateTime date = LocalDateTime.parse(booked, formatter); //parsing the String date in the booking.
+							LocalDateTime expired = date.plusWeeks(2); //Can only get a refund within two weeks of booking.
+
+							if (now.isBefore(expired)){
+								double price = flight.getPrice();
+								double total = user.getAccountBalance() + price;
+								user.setAccountBalance(total);
+							}
+						}
+					}
+					flights.remove(flight);					
 					break;
 
 				}
@@ -613,7 +631,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(this, "The flight you are trying to cancel does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			JOptionPane.showMessageDialog(this, "The flight has been cancelled", "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
+    	}
 
 		private void addToCart() {
 			String flightIDInput = JOptionPane.showInputDialog(this, "Enter the Flight ID to add to your cart:");

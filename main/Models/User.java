@@ -15,6 +15,8 @@ public class User {
     private ArrayList<Transaction> transactions;
     private ArrayList<Flight> flights;
     private ArrayList<Flight> cart; // Cart for storing selected flights before payment
+    private double accountBalance;
+    private ArrayList<Booking> bookings;
 
     // Constructor to initialize User object
     public User(int userID, String username, String password, String role) {
@@ -90,6 +92,22 @@ public class User {
 
     public void clearCart() {
         cart.clear();
+    }
+
+    public void setAccountBalance(double accountBalance){
+        this.accountBalance = accountBalance;
+    }
+
+    public double getAccountBalance(){
+        return accountBalance;
+    }
+
+    public void setBookings(ArrayList<Booking> bookings){
+        this.bookings = bookings;
+    }
+
+    public ArrayList<Booking> getBookings(){
+        return bookings;
     }
 
     @Override
