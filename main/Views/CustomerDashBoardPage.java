@@ -706,6 +706,22 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 	private void viewCart() {
 		ArrayList<Flight> cart = controller.getCurrentUser().getCart();
+		if (cart.isEmpty()) {
+			System.out.println("Your cart is empty.");
+		} else {
+			System.out.println("Your cart contains the following flights:");
+			for (Flight flight : cart) {
+				System.out.println("Flight ID: " + flight.getFlightID());
+				System.out.println("Flight Number: " + flight.getFlightNumber());
+				System.out.println("Departure City: " + flight.getDepartureCity());
+				System.out.println("Destination City: " + flight.getDestinationCity());
+				System.out.println("Departure Time: " + flight.getDepartureTime());
+				System.out.println("Arrival Time: " + flight.getArrivalTime());
+				System.out.println("Price: " + flight.getPrice());
+				System.out.println("Seats Available: " + flight.getSeatsAvailable());
+				System.out.println("------------------------");
+			}
+		}
 
 		if (cart.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Your cart is empty.", "Info", JOptionPane.INFORMATION_MESSAGE);
