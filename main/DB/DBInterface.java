@@ -13,47 +13,48 @@ import main.Models.User;
  */
 
 public interface DBInterface {
-	
-    // Return TRUE or FALSE for CREATE, UPDATE, DELETE
-    // Return Object for READ Methods
 
-    // User Management Methods
-    public User createUser(int userID, String username, String password, String role);
+	// Return TRUE or FALSE for CREATE, UPDATE, DELETE
+	// Return Object for READ Methods
 
-    public User getUser(int userID);
+	// User Management Methods
+	public User createUser(int userID, String username, String password, String role);
 
-    public Boolean updateUser(int userID, String username, String password, String role);
+	public User getUser(int userID);
 
-    public Boolean deleteUser(int userID);
+	public Boolean updateUser(int userID, String username, String password, String role);
 
-    // Flight Management Methods
-    public Boolean createFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
+	public Boolean deleteUser(int userID);
 
-    public Flight getFlight(int flightID);
+	// Flight Management Methods
+	public Boolean createFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
+			LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
 
-    public Boolean updateFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
-    		LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
+	public Flight getFlight(int flightID);
 
-    public Boolean deleteFlight(int flightID);
+	public Boolean updateFlight(int flightID, String flightNumber, String departureCity, String destinationCity,
+			LocalDateTime departureTime, LocalDateTime arrivalTime, double price, int seatsAvailable);
 
-    // Booking Methods
-    public Boolean createBooking(int userID, int flightID, double price, String seatNumber, boolean travelInsurance);
+	public Boolean deleteFlight(int flightID);
 
-    public Boolean updateBooking(int bookingId, double newPrice, String newSeatNumber, boolean newTravelInsurance);
-    
-    public Booking getBooking(int bookingID);
+	// Booking Methods
+	public Boolean createBooking(int bookingId, int userId, int flightId, LocalDateTime bookingDate, double price,
+			String seatNumber, boolean travelInsurance);
 
-    public Boolean deleteBooking(int bookingID);
+	public Boolean updateBooking(int bookingId, double newPrice, String newSeatNumber, boolean newTravelInsurance);
 
-    // Transaction Methods
-    public Boolean createTransaction(int transactionID, int userID, int bookingID, double amount);
+	public Booking getBooking(int bookingID);
 
-    public Transaction getTransaction(int transactionID);
+	public Boolean deleteBooking(int bookingID);
 
-    // Utility Methods
-    public Boolean checkFlightAvailability(int flightID, int numberOfSeats);
+	// Transaction Methods
+	public Boolean createTransaction(int transactionID, int userID, int bookingID, double amount);
 
-    public Boolean checkBookingExistence(int userID, int flightID);
+	public Transaction getTransaction(int transactionID);
+
+	// Utility Methods
+	public Boolean checkFlightAvailability(int flightID, int numberOfSeats);
+
+	public Boolean checkBookingExistence(int userID, int flightID);
 
 }

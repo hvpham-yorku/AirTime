@@ -623,16 +623,24 @@ public class DB implements DBInterface {
 	// ========================================================================================================
 
 	// Create a new booking
-	public Boolean createBooking(int userId, int flightId, double price, String seatNumber, boolean travelInsurance) {
+	public Boolean createBooking(int bookingId, int userId, int flightId, LocalDateTime bookingDate, double price,
+			String seatNumber, boolean travelInsurance) {
+		if (seatNumber == null || seatNumber.isEmpty()) {
+			System.out.println("Required parameters are empty or null ( createBooking() - DB.java )");
+			return false;
+		}
+
 		try {
-			String SQL = "INSERT INTO bookings(user_id, flight_id, price, seat_number, travel_insurance) VALUES(?,?,?,?,?)";
-			Connection DBConnection = DB.getConn();
-			PreparedStatement pstmt = DBConnection.prepareStatement(SQL);
-			pstmt.setInt(1, userId);
-			pstmt.setInt(2, flightId);
-			pstmt.setDouble(3, price);
-			pstmt.setString(4, seatNumber);
-			pstmt.setBoolean(5, travelInsurance);
+			String SQL = "INSERT INTO bookings(user_id, flight_id, booking_date, price, seat_number, travel_insurance) VALUES(?,?,?,?,?,?,?)";
+			Connection conn = getConn();
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bookingId);
+			pstmt.setInt(2, userId);
+			pstmt.setInt(3, flightId);
+			pstmt.setTimestamp(4, Timestamp.valueOf(bookingDate)); // Convert LocalDateTime to Timestamp
+			pstmt.setDouble(5, price);
+			pstmt.setString(6, seatNumber);
+			pstmt.setBoolean(7, travelInsurance);
 
 			int rowsInserted = pstmt.executeUpdate();
 			// conn.close();
@@ -682,8 +690,8 @@ public class DB implements DBInterface {
 	public Boolean updateBooking(int bookingId, double newPrice, String newSeatNumber, boolean newTravelInsurance) {
 		try {
 			String SQL = "UPDATE bookings SET price = ?, seat_number = ?, travel_insurance = ? WHERE booking_id = ?";
-			Connection DBConnection = DB.getConn();
-			PreparedStatement pstmt = DBConnection.prepareStatement(SQL);
+			Connection conn = getConn();
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setDouble(1, newPrice);
 			pstmt.setString(2, newSeatNumber);
 			pstmt.setBoolean(3, newTravelInsurance);
@@ -704,8 +712,8 @@ public class DB implements DBInterface {
 	public Boolean deleteBooking(int bookingId) {
 		try {
 			String SQL = "DELETE FROM bookings WHERE booking_id = ?";
-			Connection DBConnection = DB.getConn();
-			PreparedStatement pstmt = DBConnection.prepareStatement(SQL);
+			Connection conn = getConn();
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, bookingId);
 
 			int rowsDeleted = pstmt.executeUpdate();
