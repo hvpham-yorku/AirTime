@@ -106,6 +106,87 @@ Ossama
 
 
 
-Dilpreet
--
+**Dilpreet**
+-November 27th - Sprint 2 Standup 1
+
+What did you work on since the last standup?
+Task ID: AIR-18 (Any user must be able to add a booking into their checkout cart and continue shopping before they decide to pay if they want to)
+
+CustomerDashBoardPage:
+  - Implemented the ability for users to add flights to their cart by flight ID.
+  - Added a viewCart() method to display the current contents of the user's cart in a table format.
+  - Integrated clearCart() to allow users to remove all items from their cart.
+
+User.java:
+  - Added methods to the User class
+
+DB.java:
+  - Ensured flight data retrieval is robust for adding flights to the cart.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+Do you have any blockers?
+  - None at the moment, but testing may uncover unanticipated bugs.
+
+- November 29th - Sprint 2 Standup 2
+What did you work on since the last standup?
+Task ID: AIR-19 (Users must pay to book a flight)
+
+CustomerDashBoardPage:
+  - Added a "Process Payments" button for users to finalize bookings.
+  - Integrated with the createTransaction method to update the database with the booking and payment details.
+  - Added UI messages to confirm successful payments or display errors for empty carts.
+
+DB.java:
+  - Updated createTransaction to log transactions for specific users.
+  - Added logic to decrement available seats for a flight upon successful payment.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+Do you have any blockers?
+  - None at the moment, but testing may uncover unanticipated bugs.
+
+- November 30th - Sprint 2 Standup 3
+What did you work on since the last standup?
+Task ID: AIR-20 (Any user should be able to add travel insurance to their booking. If travel insurance has already been added, display an error message)
+
+CustomerDashBoardPage:
+  - Added an "Add Travel Insurance" button for selected bookings in the cart.
+  - Integrated checks to ensure travel insurance is not duplicated.
+  - Displayed appropriate error messages if the user attempts to add travel insurance twice.
+
+DB.java:
+  - Enhanced updateBooking to modify the travel insurance flag for specific bookings.
+  - Validated if the booking ID exists before updating to handle edge cases.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+Do you have any blockers?
+  - None at the moment, but testing may uncover unanticipated bugs.
+
+
+- December 1st - Sprint 2 Standup 4
+What did you work on since the last standup?
+Task ID: AIR-21 (The system must be able to add or remove admins from the system. An error will be displayed by the system if it is attempting to remove an admin from the system that does not exist)
+
+AdminDashBoardPage:
+  - Added "Add Admin" and "Remove Admin" buttons.
+  - Implemented pop-up prompts to collect admin details for addition or removal.
+  - Displayed error messages if the system attempts to remove a non-existent admin.
+
+Controller.java:
+  - Updated createUser to include validation for admin role creation.
+  - Added logic to verify and delete admin accounts when requested by authorized users.
+
+DB.java:
+  - Enhanced deleteUser to check user roles before deletion to ensure only admin users are removed via this function.
+
+When do you think you'll be done?
+  - All testing will be completed by December 4nd.
+
+Do you have any blockers?
+  - None at the moment, but testing may uncover unanticipated bugs.
 
