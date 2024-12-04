@@ -736,6 +736,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			}
 		}
 
+		//travel insurance user story
 		private void addTravelInsurance() {
 			// Prompt the user to enter the Booking ID
 			String bookingIDInput = JOptionPane.showInputDialog(this, "Enter the Booking ID to add travel insurance:");
