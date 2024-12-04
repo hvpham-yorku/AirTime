@@ -184,34 +184,47 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			JButton transactionHistoryButton = new JButton("Transaction History");
 			JButton flightHistoryButton = new JButton("Flight History");
 
-			 // Configure Transaction History Button
-			 transactionHistoryButton.setForeground(Color.WHITE);
-			 transactionHistoryButton.setBackground(Color.BLACK);
-			 transactionHistoryButton.addActionListener(e -> transactionHistoryCheck());
-			 buttonPanel.add(transactionHistoryButton);
-			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			// Configure Transaction History Button
+			transactionHistoryButton.setForeground(Color.WHITE);
+			transactionHistoryButton.setBackground(Color.BLACK);
+			transactionHistoryButton.addActionListener(e -> transactionHistoryCheck());
+			buttonPanel.add(transactionHistoryButton);
+			buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
 	 
-			 // Configure Flight History Button
-			 flightHistoryButton.setForeground(Color.WHITE);
-			 flightHistoryButton.setBackground(Color.BLACK);
-			 flightHistoryButton.addActionListener(e -> flightHistoryCheck());
-			 buttonPanel.add(flightHistoryButton);
-			 buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
+			// Configure Flight History Button
+			flightHistoryButton.setForeground(Color.WHITE);
+			flightHistoryButton.setBackground(Color.BLACK);
+			flightHistoryButton.addActionListener(e -> flightHistoryCheck());
+			buttonPanel.add(flightHistoryButton);
+			buttonPanel.add(Box.createVerticalStrut(10)); // Adds spacing
 	 
-			 setLayout(new BorderLayout());
-			 add(title, BorderLayout.NORTH);
-			 add(buttonPanel, BorderLayout.WEST);
-			 add(bottomPanel, BorderLayout.SOUTH);
+			setLayout(new BorderLayout());
+			add(title, BorderLayout.NORTH);
+			add(buttonPanel, BorderLayout.WEST);
+			add(bottomPanel, BorderLayout.SOUTH);
 	 
-			 transactionTable = new JTable();
-			 transTableScrollPane = new JScrollPane(transactionTable);
-			 transTableScrollPane.setVisible(false);
-			 add(transTableScrollPane, BorderLayout.CENTER);
+			transactionTable = new JTable();
+			transTableScrollPane = new JScrollPane(transactionTable);
+			transTableScrollPane.setVisible(false);
+			add(transTableScrollPane, BorderLayout.CENTER);
 	 
-			 historyTable = new JTable();
-			 historyTableScrollPane = new JScrollPane(historyTable);
-			 historyTableScrollPane.setVisible(false);
-			 add(historyTableScrollPane, BorderLayout.CENTER);
+			historyTable = new JTable();
+			historyTableScrollPane = new JScrollPane(historyTable);
+			historyTableScrollPane.setVisible(false);
+			add(historyTableScrollPane, BorderLayout.CENTER);
+
+
+			// Create the Cancel Flight button
+			JButton cancelFlightButton = new JButton("Cancel Flight");
+			cancelFlightButton.setForeground(Color.WHITE);
+			cancelFlightButton.setBackground(Color.BLACK);
+
+			// Add action listener for the button to call the cancelFlight() method
+			cancelFlightButton.addActionListener(e -> cancelFlight());
+
+			// Add the button to the button panel
+			buttonPanel.add(Box.createVerticalStrut(10)); // Adds 10px spacing between components
+			buttonPanel.add(cancelFlightButton);
 
 			 JPanel buttonPanel = new JPanel();
 			 buttonPanel.setLayout(new FlowLayout());
@@ -567,6 +580,43 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 
 
 		}
+    private void cancelFlight(){
+
+			User user = controller.getCurrentUser();
+			LocalDateTime now = LocalDateTime.now();
+			ArrayList<Flight> currFlights = new ArrayList<Flight>();
+			ArrayList<Flight> flights = user.getFlights();
+
+			for (int i = 0; i<flights.size(); i++){
+				if (flights.get(i).getDepartureTime().isAfter(now)){
+					currFlights.add(flights.get(i));
+				}
+			}
+
+			if (currFlights.isEmpty()){
+				JOptionPane.showMessageDialog(this, "You do not have any flights to cancel.", "Info", JOptionPane.INFORMATION_MESSAGE);
+			}
+
+			int flightID = Integer.valueOf(JOptionPane.showInputDialog("Flight ID you wish to remove: "));
+
+			boolean exists = false;
+
+			for (int j = 0; j < flights.size(); j++){
+				Flight flight = flights.get(j);
+				if (flight.getFlightID() == flightID){
+
+					exists = true;
+					flights.remove(flight);
+					break;
+
+				}
+			}
+
+			if (!exists){
+				JOptionPane.showMessageDialog(this, "The flight you are trying to cancel does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			JOptionPane.showMessageDialog(this, "The flight has been cancelled", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
 
 		private void addToCart() {
 			String flightIDInput = JOptionPane.showInputDialog(this, "Enter the Flight ID to add to your cart:");
