@@ -585,7 +585,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			ArrayList<Flight> currFlights = new ArrayList<Flight>();
 			ArrayList<Flight> flights = user.getFlights();
 
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); //pattern for the string parsing
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"); //pattern for the string parsing
 
 			for (int i = 0; i<flights.size(); i++){
 				if (flights.get(i).getDepartureTime().isAfter(now)){
