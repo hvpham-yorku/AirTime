@@ -81,6 +81,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 	private JTable cartTable;
 	private JScrollPane cartScrollPane;
 	private JTabbedPane tabbedPane;
+	private JPanel centerPanel;
 
 	public CustomerDashBoardPage(Controller controller) {
 		setBackground(new Color(255, 255, 255));
@@ -180,13 +181,14 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		// tableScrollPane.setVisible(false);
 		// add(tableScrollPane, BorderLayout.CENTER);
 
-		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Browse", tableScrollPane);
-		tabbedPane.addTab("Transactions", transTableScrollPane);
-		tabbedPane.addTab("History", historyTableScrollPane);
-		tabbedPane.addTab("Cart", cartScrollPane);
-
-		add(tabbedPane, BorderLayout.CENTER);
+		/*
+		 * tabbedPane = new JTabbedPane(); tabbedPane.addTab("Browse", tableScrollPane);
+		 * tabbedPane.addTab("Transactions", transTableScrollPane);
+		 * tabbedPane.addTab("History", historyTableScrollPane);
+		 * tabbedPane.addTab("Cart", cartScrollPane);
+		 * 
+		 * add(tabbedPane, BorderLayout.CENTER);
+		 */
 
 		// Configure Transaction History Button
 		transactionHistoryButton.setForeground(Color.WHITE);
@@ -265,6 +267,14 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		addTravelInsuranceButton.setBackground(Color.BLACK);
 		addTravelInsuranceButton.addActionListener(e -> addTravelInsurance());
 
+		centerPanel = new JPanel(new CardLayout());
+		centerPanel.add(tableScrollPane, "Browse");
+		centerPanel.add(transTableScrollPane, "Transactions");
+		centerPanel.add(historyTableScrollPane, "History");
+		centerPanel.add(cartScrollPane, "Cart");
+
+		add(centerPanel, BorderLayout.CENTER);
+
 	}
 
 	private void toggleBrowseFlights() {
@@ -314,7 +324,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			historyTableScrollPane.setVisible(false);
 			cartScrollPane.setVisible(false);
 			tableScrollPane.setVisible(true);
-			tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
+			CardLayout cl = (CardLayout) centerPanel.getLayout();
+			cl.show(centerPanel, "Browse"); // Show the Cart table
+			// tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 			revalidate();
 			repaint();
 		} catch (Exception e) {
@@ -383,7 +395,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		historyTableScrollPane.setVisible(false);
 		cartScrollPane.setVisible(false);
 		tableScrollPane.setVisible(true);
-		tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
+		CardLayout cl = (CardLayout) centerPanel.getLayout();
+		cl.show(centerPanel, "Browse"); // Show the table
+		// tabbedPane.setSelectedIndex(0); // Switch to the "Browse" tab
 		revalidate();
 		repaint();
 	}
@@ -574,7 +588,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		historyTableScrollPane.setVisible(false);
 		cartScrollPane.setVisible(false);
 		transTableScrollPane.setVisible(true);
-		tabbedPane.setSelectedIndex(1); // Switch to the "Transactions" tab
+		CardLayout cl = (CardLayout) centerPanel.getLayout();
+		cl.show(centerPanel, "Transcations"); // Show the Cart table
+		// tabbedPane.setSelectedIndex(1); // Switch to the "Transactions" tab
 		revalidate();
 		repaint();
 	}
@@ -620,7 +636,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		transTableScrollPane.setVisible(false);
 		cartScrollPane.setVisible(false);
 		historyTableScrollPane.setVisible(true);
-		tabbedPane.setSelectedIndex(2); // Switch to the "History" tab
+		CardLayout cl = (CardLayout) centerPanel.getLayout();
+		cl.show(centerPanel, "History"); // Show the Cart table
+		// tabbedPane.setSelectedIndex(2); // Switch to the "History" tab
 		revalidate();
 		repaint();
 
@@ -750,7 +768,9 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		historyTableScrollPane.setVisible(false);
 		// Show the Cart content
 		cartScrollPane.setVisible(true);
-		tabbedPane.setSelectedIndex(3); // Switch to the "Cart" tab
+		CardLayout cl = (CardLayout) centerPanel.getLayout();
+		cl.show(centerPanel, "Cart"); // Show the Cart table
+		// tabbedPane.setSelectedIndex(3); // Switch to the "Cart" tab
 		revalidate();
 		repaint();
 	}
@@ -761,7 +781,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 		cartScrollPane.setVisible(false);
 		revalidate();
 		repaint();
-		tabbedPane.setSelectedIndex(3);
+		// tabbedPane.setSelectedIndex(3);
 	}
 
 	// Payment user story
