@@ -688,6 +688,7 @@ public class CustomerDashBoardPage extends JPanel implements ActionListener {
 			cartScrollPane.setVisible(false);
 		}
 
+		//payment user story
 		private void processPayment() {
 			User currentUser = controller.getCurrentUser();
 			ArrayList<Flight> cart = currentUser.getCart();
