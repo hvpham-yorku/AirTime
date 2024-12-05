@@ -100,7 +100,7 @@ Do you have any blockers?
 
 
 
-Ossama
+Ossama Benaini
 -
 November 27th - Sprint 2 Standup 1
 -
