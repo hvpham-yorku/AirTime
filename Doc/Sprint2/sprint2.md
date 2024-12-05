@@ -53,5 +53,5 @@ Decisions on User Stories for Sprint 2:
 ---
 
 ### Note:
-Since all documentation for this sprint was completed by Hena (excluding `Daily Stand-up.md` and `PB.md`) with limited communication from other team members (often being left on read or unanswered), I (Hena) am not fully aware of the completed work done by teammates. Additionally, the features implemented by teammates are not functioning as expected and require fixes to work properly.
+Since all documentation for this sprint was completed by Hena (excluding part of `Daily Stand-up.md` and `PB.md`) with limited communication from other team members (often being left on read or unanswered), I (Hena) am not fully aware of the completed work done by teammates. Additionally, the features implemented by teammates are not functioning as expected and require fixes to work properly.
 
