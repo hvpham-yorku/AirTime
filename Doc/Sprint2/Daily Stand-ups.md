@@ -102,9 +102,98 @@ Do you have any blockers?
 
 Ossama
 -
+November 27th - Sprint 2 Standup 1
+-
 
+What did you work on since the last standup?
 
+Task ID: AIR-14 (Any user should be able to book as many flights as they would like.)
 
+CustomerDashBoardPage:
+  - Checked and removed any restrictions on the number of flights that a customer is allowed to book.
+  - Removed restrictions on the same customer booking two flights at the same time.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+What do you commit to next?
+  - Working on completing Task ID: AIR-17
+
+Do you have any blockers?
+  - None currently, but buttons and GUI might become oversaturated with the addition of new methods.
+
+December 1st - Sprint 2 Standup 2
+-
+
+What did you work on since the last standup?
+  - Task ID: AIR-17 (Any user should be able to view transaction history and flight history.)
+
+User.java
+  - Added some parameters to the User class such as ArrayLists to hold past transactions and flights.
+  - Added the getter and setter methods for those parameters.
+
+CustomerDashBoardPage.java
+  - Implemented the checkTransactionHistory() method for users to check their transaction history.
+  - Implemented the buttons and panels for the user to access their transaction history.
+
+When do you think you'll be done?
+  - All implementation and testing will be complete by December 3rd.
+
+Do you have any blockers?
+  - None at the moment.
+
+December 2nd - Sprint 2 Standup 3
+-
+
+What did you work on since the last standup?
+  - Task ID: AIR-17 (Any user should be able to see their transaction history and flight history)
+
+CustomerDashBoardPage:
+  - Implemented the checkFlightHistory() method for users to be able to get their past flights.
+  - Implemented the buttons and panels for users to access their past flights.
+
+Users.java:
+  - Added a bookings ArrayList as a parameter for Users.
+  - Implemented the getter and setter methods for that parameter.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+Do you have any blockers?
+  - None at the moment.
+
+December 3rd - Sprint 2 Standup 4
+-
+What did you work on since the last standup?
+  - Task ID: AIR-15 (Any user should be able to cancel a flight that they have booked.)
+
+CustomerDashBoardPage:
+  - Implemented the cancelFlight() method for users to be able to cancel any flgihts that they have booked.
+  - Added the appropriate buttons and panels for the cancelFlight() method.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3nd.
+
+Do you have any blockers?
+  - There are some issues with the buttons and panels not showing up for some of the methods.
+
+December 3rd - Sprint 2 Standup 5
+-
+What did you work on since the last standup?
+  - Task ID: AIR-16 (Any user should be able to recieve a refund for a flight that they cancel if it is within a certain amount of time.
+
+CustomerDashBoardPage:
+  - Updated the cancelFlight() method to include a refund to the users account if the current date was within two weeks of the booked date.
+
+User.Java:
+  - Added an accountBalance parameter for the user.
+  -  Implemented the getter and setter methods for that parameter.
+
+When do you think you'll be done?
+  - All testing will be completed by December 3rd.
+
+Do you have any blockers?
+  - The buttons and panels for some of the methods are interfering with each other, and therefore are not being displayed correctly.
 
 **Dilpreet**
 -November 27th - Sprint 2 Standup 1
