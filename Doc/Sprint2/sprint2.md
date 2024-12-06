@@ -33,6 +33,10 @@ Decisions on User Stories for Sprint 2:
 - Address booking, cancellation, and refunds next.
 - Include admin management and checkout cart features as stretch goals.
 
+Jira
+-
+https://airtime1.atlassian.net/jira/core/projects/AIR/board?atlOrigin=eyJpIjoiNDZlOGFhYTljZjcxNDQ3NjlkOWI5NTExNzEwNzIwMmUiLCJwIjoiaiJ9 
+
 # Task Breakdown
 
 | **Task**                                      | **Assigned To** | **Status**          |
